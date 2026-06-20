@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Cobertura AP + Bolso + Celular para usuarios vinculados a la Municipalidad de Morón."
+    >
+    <meta name="api-url" content="">
+    <title>Coberturas Municipalidad de Morón</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+    <header class="site-header" role="banner">
+      <p class="site-header__eyebrow">Municipalidad de Morón</p>
+      <h1>Coberturas AP + Bolso + Celular</h1>
+      <p class="site-header__lead">
+        Información clara y formulario simple para iniciar la emisión desde un
+        celular.
+      </p>
+    </header>
+
+    <main id="contenido-principal">
+      <section class="content-section content-section--proposal" aria-labelledby="info-title">
+        <h2 id="info-title">Información de la cobertura</h2>
+        <p>
+          Esta propuesta reúne la cobertura de accidentes personales con
+          protección para bolso y celular, pensada para una lectura rápida y
+          una solicitud ágil desde dispositivos móviles.
+        </p>
+        <p>
+          <a class="proposal-link" href="Propuesta AP+Bolso+Celular.pdf">Descargar Propuesta Completa (PDF)</a>
+        </p>
+      </section>
+
+      <section class="content-section content-section--form" aria-labelledby="form-title">
+        <h2 id="form-title">Cotizador / Formulario</h2>
+        <p>Completá los datos solicitados para emitir la cobertura.</p>
+
+        <form id="quote-form" action="#" method="post" autocomplete="on" novalidate>
+          <div class="field">
+            <label for="fullName">Nombre y Apellido</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              autocomplete="name"
+              aria-describedby="fullName-error"
+              required
+            >
+            <p class="field__error" id="fullName-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="dni">DNI</label>
+            <input
+              type="text"
+              id="dni"
+              name="dni"
+              inputmode="numeric"
+              autocomplete="off"
+              pattern="[0-9]+"
+              aria-describedby="dni-error"
+              required
+            >
+            <p class="field__error" id="dni-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="birthDate">Fecha de Nacimiento</label>
+            <input
+              type="date"
+              id="birthDate"
+              name="birthDate"
+              autocomplete="bday"
+              aria-describedby="birthDate-error"
+              required
+            >
+            <p class="field__error" id="birthDate-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="email">Email de contacto</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              aria-describedby="email-error"
+              required
+            >
+            <p class="field__error" id="email-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="phone">Teléfono / Celular</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              autocomplete="tel"
+              aria-describedby="phone-error"
+              required
+            >
+            <p class="field__error" id="phone-error" hidden></p>
+          </div>
+
+          <div class="form-feedback" role="status" aria-live="polite" aria-atomic="true">
+            <p id="feedback-sending" hidden>Enviando...</p>
+            <p id="feedback-success" hidden>
+              Emisión Exitosa. Recibirá un correo de confirmación.
+            </p>
+            <p id="feedback-error" hidden>Error al procesar.</p>
+          </div>
+
+          <button type="submit" id="submit-button" class="primary-action">Emitir Cobertura</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
