@@ -1,4 +1,5 @@
-const API_URL = 'https://moron-api.vercel.app/api/enviar';
+const GITHUB_TOKEN = "REEMPLAZAR_CON_TU_GITHUB_TOKEN";
+const API_URL = "https://api.github.com/repos/matiasnowo/cotizador-moron-bbva/dispatches";
 
 const FIELD_ORDER = ["fullName", "dni", "birthDate", "email", "phone"];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -187,13 +188,27 @@ async function enviarSolicitud(datos) {
     throw new Error("API_URL no configurada");
   }
 
+  if (!GITHUB_TOKEN || GITHUB_TOKEN === "REEMPLAZAR_CON_TU_GITHUB_TOKEN") {
+    throw new Error("GITHUB_TOKEN no configurado");
+  }
+
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
     },
-    body: JSON.stringify(datos),
+    body: JSON.stringify({
+      event_type: "enviar_formulario",
+      client_payload: {
+        nombre: datos.fullName,
+        dni: datos.dni,
+        fechaNacimiento: datos.birthDate,
+        email: datos.email,
+        telefono: datos.phone,
+      },
+    }),
   });
 
   if (!response.ok) {
@@ -201,21 +216,6 @@ async function enviarSolicitud(datos) {
   }
 
   return response;
-}
-
-function resolveApiUrl() {
-  if (typeof window !== "undefined") {
-    const injectedUrl = window.__APP_CONFIG__?.API_URL || window.__API_URL__;
-
-    if (typeof injectedUrl === "string" && injectedUrl.trim()) {
-      return injectedUrl.trim();
-    }
-  }
-
-  const metaTag = document.querySelector('meta[name="api-url"]');
-  const metaUrl = metaTag?.getAttribute("content")?.trim();
-
-  return metaUrl || "";
 }
 
 function readFormValues(form) {

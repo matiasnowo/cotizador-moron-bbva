@@ -1,0 +1,32 @@
+name: Enviar mail por EWS
+
+on:
+  repository_dispatch:
+    types:
+      - enviar_formulario
+
+jobs:
+  enviar-mail:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar axios
+        run: |
+          npm init -y
+          npm install axios
+
+      - name: Ejecutar envio EWS
+        env:
+          EXCHANGE_USER: ${{ secrets.EXCHANGE_USER }}
+          EXCHANGE_PASS: ${{ secrets.EXCHANGE_PASS }}
+          DESTINATARIO_MAIL: ${{ secrets.DESTINATARIO_MAIL }}
+          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: node .github/scripts/send-ews.js
