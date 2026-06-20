@@ -1,5 +1,5 @@
-const GITHUB_TOKEN = "REEMPLAZAR_CON_TU_GITHUB_TOKEN";
-const API_URL = "https://api.github.com/repos/matiasnowo/cotizador-moron-bbva/dispatches";
+// Ya no necesitás ningún token acá en el HTML público
+const API_URL = "https://proxy-github-moron.TU_SUBDOMINIO.workers.dev";
 
 const FIELD_ORDER = ["fullName", "dni", "birthDate", "email", "phone"];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -188,26 +188,17 @@ async function enviarSolicitud(datos) {
     throw new Error("API_URL no configurada");
   }
 
-  if (!GITHUB_TOKEN || GITHUB_TOKEN === "REEMPLAZAR_CON_TU_GITHUB_TOKEN") {
-    throw new Error("GITHUB_TOKEN no configurado");
-  }
-
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
     },
     body: JSON.stringify({
-      event_type: "enviar_formulario",
-      client_payload: {
-        nombre: datos.fullName,
-        dni: datos.dni,
-        fechaNacimiento: datos.birthDate,
-        email: datos.email,
-        telefono: datos.phone,
-      },
+      nombre: datos.fullName,
+      dni: datos.dni,
+      fechaNacimiento: datos.birthDate,
+      email: datos.email,
+      telefono: datos.phone,
     }),
   });
 
