@@ -1,4 +1,4 @@
-const API_URL = resolveApiUrl();
+const API_URL = 'https://moron-api.vercel.app/api/enviar';
 
 const FIELD_ORDER = ["fullName", "dni", "birthDate", "email", "phone"];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
