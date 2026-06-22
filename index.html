@@ -5,121 +5,558 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Cobertura AP + Bolso + Celular para usuarios vinculados a la Municipalidad de Morón."
+      content="Seguros de convenio para Bici y Bolso/AP/Celular con acceso a baja y formularios de solicitud."
     >
-    <meta name="api-url" content="">
-    <title>Coberturas Municipalidad de Morón</title>
+    <title>Seguros - Convenio | Municipalidad de Moron</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
   </head>
-  <body>
+  <body class="app-shell">
+    <div class="app-shell__bg app-shell__bg--one" aria-hidden="true"></div>
+    <div class="app-shell__bg app-shell__bg--two" aria-hidden="true"></div>
+
     <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 
-    <header class="site-header" role="banner">
-      <p class="site-header__eyebrow">Municipalidad de Morón</p>
-      <h1>Coberturas AP + Bolso + Celular</h1>
-      <p class="site-header__lead">
-        Información clara y formulario simple para iniciar la emisión desde un
-        celular.
-      </p>
+    <header class="app-header" role="banner">
+      <div class="brand-lockup">
+        <span class="brand-lockup__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="presentation" focusable="false">
+            <rect x="16" y="10" width="32" height="44" rx="6"></rect>
+            <path d="M22 20h20M22 28h20M22 36h12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+            <circle cx="24" cy="47" r="4" fill="currentColor"></circle>
+          </svg>
+        </span>
+        <div>
+          <p class="brand-lockup__eyebrow">Municipalidad de Moron</p>
+          <h1>Seguros - Convenio</h1>
+        </div>
+      </div>
+
+      <nav class="app-nav" aria-label="Navegacion principal">
+        <button type="button" class="app-nav__item" data-view-target="home" aria-current="page">Inicio</button>
+        <button type="button" class="app-nav__item" data-view-target="bici">Bici</button>
+        <button type="button" class="app-nav__item" data-view-target="bolso">Bolso</button>
+        <button type="button" class="app-nav__item" data-view-target="baja">Baja</button>
+      </nav>
     </header>
 
-    <main id="contenido-principal">
-      <section class="content-section content-section--proposal" aria-labelledby="info-title">
-        <h2 id="info-title">Información de la cobertura</h2>
-        <p>
-          Esta propuesta reúne la cobertura de accidentes personales con
-          protección para bolso y celular, pensada para una lectura rápida y
-          una solicitud ágil desde dispositivos móviles.
-        </p>
-        <p>
-          <a class="proposal-link" href="Propuesta AP+Bolso+Celular.pdf">Descargar Propuesta Completa (PDF)</a>
-        </p>
+    <main id="contenido-principal" class="app-main">
+      <section class="app-view app-view--home" data-view="home" aria-labelledby="home-title">
+        <div class="hero-card">
+          <p class="hero-card__eyebrow">SEGUROS - CONVENIO</p>
+          <h2 id="home-title">Selecciona el tipo de emision que deseas realizar</h2>
+          <p>
+            Ingresa por el producto que necesites, descarga las condiciones y continua con el
+            flujo correspondiente sin perder el foco visual de la portada.
+          </p>
+        </div>
+
+        <div class="product-grid" role="list">
+          <article class="product-card product-card--bici" role="listitem">
+            <div class="product-card__art" aria-hidden="true">
+              <svg viewBox="0 0 240 180" role="presentation" focusable="false">
+                <circle cx="84" cy="122" r="35"></circle>
+                <circle cx="164" cy="122" r="35"></circle>
+                <path d="M84 122l32-40h20l-16 40h24l20-40"></path>
+                <path d="M116 82l18 40M136 82l-18 40M98 62h22M166 64l-16 18" fill="none"></path>
+                <circle cx="84" cy="122" r="8"></circle>
+                <circle cx="164" cy="122" r="8"></circle>
+                <path d="M96 74l10-18h24M150 86l20-24" fill="none"></path>
+              </svg>
+            </div>
+            <div class="product-card__body">
+              <h3>Seguro de Bici</h3>
+              <p>Descarga las condiciones y accede a una solicitud visual para bicicleta.</p>
+              <a class="product-card__link" href="Condiciones-Seguro-Bici.pdf" download>Descargar PDF con condiciones</a>
+              <button type="button" class="product-card__cta product-card__cta--green" data-view-target="bici">Emitir bicicleta</button>
+            </div>
+          </article>
+
+          <article class="product-card product-card--bolso" role="listitem">
+            <div class="product-card__art" aria-hidden="true">
+              <svg viewBox="0 0 240 180" role="presentation" focusable="false">
+                <rect x="70" y="42" width="70" height="86" rx="12"></rect>
+                <path d="M88 42c0-18 12-28 27-28s27 10 27 28" fill="none"></path>
+                <rect x="150" y="56" width="34" height="58" rx="8"></rect>
+                <rect x="188" y="66" width="20" height="44" rx="4"></rect>
+                <path d="M150 100h34" fill="none"></path>
+              </svg>
+            </div>
+            <div class="product-card__body">
+              <h3>Bolso / AP / Celular</h3>
+              <p>Continuidad del formulario actual con acceso directo a la propuesta.</p>
+              <a class="product-card__link" href="Propuesta AP+Bolso+Celular.pdf" download>Descargar PDF con condiciones</a>
+              <button type="button" class="product-card__cta product-card__cta--purple" data-view-target="bolso">Emitir bolso</button>
+            </div>
+          </article>
+        </div>
+
+        <section class="dismissal-card" aria-labelledby="dismissal-title">
+          <div>
+            <p id="dismissal-title" class="dismissal-card__title">Queres darte de baja?</p>
+            <p>Podes pedir la anulacion en cualquier momento con un acceso menos visible pero directo.</p>
+          </div>
+          <button type="button" class="dismissal-card__button" data-view-target="baja">Solicitar baja</button>
+        </section>
       </section>
 
-      <section class="content-section content-section--form" aria-labelledby="form-title">
-        <h2 id="form-title">Cotizador / Formulario</h2>
-        <p>Completá los datos solicitados para emitir la cobertura.</p>
+      <section class="app-view app-view--bici" data-view="bici" aria-labelledby="bici-title" hidden>
+        <div class="section-topline">
+          <button type="button" class="back-link" data-view-target="home">Volver al inicio</button>
+          <span class="section-topline__tag">Seguro de Bici</span>
+        </div>
 
-        <form id="quote-form" action="#" method="post" autocomplete="on" novalidate>
-          <div class="field">
-            <label for="fullName">Nombre y Apellido</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              autocomplete="name"
-              aria-describedby="fullName-error"
-              required
-            >
-            <p class="field__error" id="fullName-error" hidden></p>
-          </div>
-
-          <div class="field">
-            <label for="dni">DNI</label>
-            <input
-              type="text"
-              id="dni"
-              name="dni"
-              inputmode="numeric"
-              autocomplete="off"
-              pattern="[0-9]+"
-              aria-describedby="dni-error"
-              required
-            >
-            <p class="field__error" id="dni-error" hidden></p>
-          </div>
-
-          <div class="field">
-            <label for="birthDate">Fecha de Nacimiento</label>
-            <input
-              type="date"
-              id="birthDate"
-              name="birthDate"
-              autocomplete="bday"
-              aria-describedby="birthDate-error"
-              required
-            >
-            <p class="field__error" id="birthDate-error" hidden></p>
-          </div>
-
-          <div class="field">
-            <label for="email">Email de contacto</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              autocomplete="email"
-              aria-describedby="email-error"
-              required
-            >
-            <p class="field__error" id="email-error" hidden></p>
-          </div>
-
-          <div class="field">
-            <label for="phone">Teléfono / Celular</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              autocomplete="tel"
-              aria-describedby="phone-error"
-              required
-            >
-            <p class="field__error" id="phone-error" hidden></p>
-          </div>
-
-          <div class="form-feedback" role="status" aria-live="polite" aria-atomic="true">
-            <p id="feedback-sending" hidden>Enviando...</p>
-            <p id="feedback-success" hidden>
-              Emisión Exitosa. Recibirá un correo de confirmación.
+        <div class="bici-layout">
+          <section class="panel panel--plans" aria-labelledby="bici-title">
+            <p class="panel__eyebrow">Elegi tu plan</p>
+            <h2 id="bici-title">Elegi tu plan</h2>
+            <p class="panel__lead">
+              La grilla de planes queda lista para la etapa comercial siguiente, con una lectura visual
+              inspirada en la referencia aprobada.
             </p>
-            <p id="feedback-error" hidden>Error al procesar.</p>
-          </div>
 
-          <button type="submit" id="submit-button" class="primary-action">Emitir Cobertura</button>
-        </form>
+            <div class="plan-grid" role="radiogroup" aria-label="Planes de bici">
+              <button type="button" class="plan-card" data-bici-plan="200" aria-pressed="false">
+                <span class="plan-card__badge">Plan 200</span>
+                <strong>Robo hasta $200.000</strong>
+                <span class="plan-card__price">$13.000 trimestral</span>
+                <span class="plan-card__note">Coberturas, asistencia y franquicia segun la tabla comercial.</span>
+              </button>
+
+              <button type="button" class="plan-card is-selected" data-bici-plan="400" aria-pressed="true">
+                <span class="plan-card__badge plan-card__badge--featured">Mas elegido</span>
+                <strong>Plan 400</strong>
+                <span class="plan-card__price">Robo hasta $400.000</span>
+                <span class="plan-card__note">$18.000 trimestral</span>
+              </button>
+
+              <button type="button" class="plan-card" data-bici-plan="600" aria-pressed="false">
+                <span class="plan-card__badge">Plan 600</span>
+                <strong>Robo hasta $600.000</strong>
+                <span class="plan-card__price">$23.000 trimestral</span>
+                <span class="plan-card__note">Cobertura ampliada para la bicicleta y asistencia.</span>
+              </button>
+            </div>
+
+            <p class="field__error" id="bici-plan-error" hidden></p>
+
+            <div class="notice-box">
+              <div class="notice-box__icon" aria-hidden="true">!</div>
+              <p>
+                En caso de robo, el monto de la indemnizacion descontara la franquicia segun las
+                condiciones de la poliza.
+              </p>
+            </div>
+
+            <div class="benefit-strip" aria-label="Beneficios principales">
+              <article>
+                <strong>Robo e incendio</strong>
+                <p>Cobertura principal para la bicicleta.</p>
+              </article>
+              <article>
+                <strong>Responsabilidad civil</strong>
+                <p>Proteccion para terceros.</p>
+              </article>
+              <article>
+                <strong>Accidentes personales</strong>
+                <p>Asistencia al conductor.</p>
+              </article>
+              <article>
+                <strong>Asistencia 24/7</strong>
+                <p>Apoyo al ciclista en todo el pais.</p>
+              </article>
+            </div>
+
+            <a class="panel__link" href="Condiciones-Seguro-Bici.pdf" download>Descargar PDF con condiciones</a>
+          </section>
+
+          <aside class="panel panel--request panel--bici-form" aria-labelledby="bici-request-title">
+            <p class="panel__eyebrow">Tus datos para solicitar cobertura</p>
+            <h3 id="bici-request-title">Tus datos para solicitar cobertura</h3>
+            <div class="request-intro">
+              <span class="request-intro__icon" aria-hidden="true">&gt;</span>
+              <p>Elegi un plan, completa tus datos y deja lista la solicitud para que luego podamos continuar con la emision.</p>
+            </div>
+
+            <div class="bici-summary" aria-live="polite" aria-atomic="true">
+              <article>
+                <span>Plan seleccionado</span>
+                <strong id="bici-summary-plan-name">Plan 400</strong>
+              </article>
+              <article>
+                <span>Suma asegurada</span>
+                <strong id="bici-summary-limit">Robo hasta $400.000</strong>
+              </article>
+              <article>
+                <span>Precio</span>
+                <strong id="bici-summary-price">$18.000 trimestral</strong>
+              </article>
+              <article>
+                <span>Franquicia</span>
+                <strong id="bici-summary-franchise">10% de la suma asegurada</strong>
+              </article>
+            </div>
+
+            <form id="bici-form" class="bici-form" action="#" method="post" novalidate>
+              <input type="hidden" id="biciPlanId" name="biciPlanId" value="400">
+
+              <section class="bici-form__section">
+                <h4>Datos del asegurado</h4>
+                <div class="form-grid form-grid--bici">
+                  <label class="field">
+                    <span>Nombre y apellido</span>
+                    <input type="text" id="biciFullName" name="fullName" autocomplete="name" aria-describedby="bici-fullName-error" required>
+                    <p class="field__error" id="bici-fullName-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>DNI / CUIL</span>
+                    <input type="text" id="biciDniCuil" name="dniCuil" inputmode="numeric" autocomplete="off" pattern="[0-9]{7,11}" minlength="7" maxlength="11" aria-describedby="bici-dniCuil-error" required>
+                    <p class="field__error" id="bici-dniCuil-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Email</span>
+                    <input type="email" id="biciEmail" name="email" autocomplete="email" aria-describedby="bici-email-error" required>
+                    <p class="field__error" id="bici-email-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Telefono</span>
+                    <input type="tel" id="biciPhone" name="phone" autocomplete="tel" aria-describedby="bici-phone-error" required>
+                    <p class="field__error" id="bici-phone-error" hidden></p>
+                  </label>
+
+                  <label class="field field--full">
+                    <span>Domicilio</span>
+                    <input type="text" id="biciAddress" name="address" autocomplete="street-address" aria-describedby="bici-address-error" required>
+                    <p class="field__error" id="bici-address-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Codigo postal</span>
+                    <input type="text" id="biciPostalCode" name="postalCode" autocomplete="postal-code" aria-describedby="bici-postalCode-error" required>
+                    <p class="field__error" id="bici-postalCode-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Localidad</span>
+                    <input type="text" id="biciLocality" name="locality" autocomplete="address-level2" aria-describedby="bici-locality-error" required>
+                    <p class="field__error" id="bici-locality-error" hidden></p>
+                  </label>
+
+                  <label class="field field--full">
+                    <span>Provincia</span>
+                    <select id="biciProvince" name="province" aria-describedby="bici-province-error" required>
+                      <option value="">Seleccionar provincia</option>
+                      <option>Buenos Aires</option>
+                      <option>Ciudad Autonoma de Buenos Aires</option>
+                      <option>Catamarca</option>
+                      <option>Chaco</option>
+                      <option>Chubut</option>
+                      <option>Cordoba</option>
+                      <option>Corrientes</option>
+                      <option>Entre Rios</option>
+                      <option>Formosa</option>
+                      <option>Jujuy</option>
+                      <option>La Pampa</option>
+                      <option>La Rioja</option>
+                      <option>Mendoza</option>
+                      <option>Misiones</option>
+                      <option>Neuquen</option>
+                      <option>Rio Negro</option>
+                      <option>Salta</option>
+                      <option>San Juan</option>
+                      <option>San Luis</option>
+                      <option>Santa Cruz</option>
+                      <option>Santa Fe</option>
+                      <option>Santiago del Estero</option>
+                      <option>Tierra del Fuego</option>
+                      <option>Tucuman</option>
+                    </select>
+                    <p class="field__error" id="bici-province-error" hidden></p>
+                  </label>
+                </div>
+              </section>
+
+              <section class="bici-form__section">
+                <h4>Datos de la bicicleta</h4>
+                <div class="form-grid form-grid--bici">
+                  <label class="field">
+                    <span>Marca</span>
+                    <input type="text" id="biciBrand" name="brand" autocomplete="off" aria-describedby="bici-brand-error" required>
+                    <p class="field__error" id="bici-brand-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Modelo</span>
+                    <input type="text" id="biciModel" name="model" autocomplete="off" aria-describedby="bici-model-error" required>
+                    <p class="field__error" id="bici-model-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Rodado</span>
+                    <select id="biciWheelSize" name="wheelSize" aria-describedby="bici-wheelSize-error" required>
+                      <option value="">Seleccionar rodado</option>
+                      <option value="20">20</option>
+                      <option value="24">24</option>
+                      <option value="26">26</option>
+                      <option value="27.5">27.5</option>
+                      <option value="29">29</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                    <p class="field__error" id="bici-wheelSize-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Anio</span>
+                    <input type="number" id="biciYear" name="year" inputmode="numeric" min="1990" max="2026" aria-describedby="bici-year-error" required>
+                    <p class="field__error" id="bici-year-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Numero de cuadro</span>
+                    <input type="text" id="biciFrameNumber" name="frameNumber" autocomplete="off" aria-describedby="bici-frameNumber-error" required>
+                    <p class="field__error" id="bici-frameNumber-error" hidden></p>
+                  </label>
+
+                  <label class="field">
+                    <span>Valor de la bicicleta</span>
+                    <input type="number" id="biciValue" name="value" inputmode="numeric" min="1" step="1" aria-describedby="bici-value-error" required>
+                    <p class="field__error" id="bici-value-error" hidden></p>
+                  </label>
+
+                  <label class="field field--full">
+                    <span>Color</span>
+                    <select id="biciColor" name="color" aria-describedby="bici-color-error" required>
+                      <option value="">Seleccionar color</option>
+                      <option>Negro</option>
+                      <option>Blanco</option>
+                      <option>Rojo</option>
+                      <option>Azul</option>
+                      <option>Verde</option>
+                      <option>Gris</option>
+                      <option>Otro</option>
+                    </select>
+                    <p class="field__error" id="bici-color-error" hidden></p>
+                  </label>
+                </div>
+              </section>
+
+              <section class="bici-form__section bici-form__section--full">
+                <h4>Forma de contacto preferida</h4>
+                <div class="contact-grid" role="radiogroup" aria-label="Forma de contacto preferida">
+                  <label class="contact-card">
+                    <input type="radio" name="contactPreference" value="whatsapp" checked>
+                    <span>WhatsApp</span>
+                  </label>
+                  <label class="contact-card">
+                    <input type="radio" name="contactPreference" value="call">
+                    <span>Llamada telefonica</span>
+                  </label>
+                </div>
+                <p class="field__error" id="bici-contactPreference-error" hidden></p>
+              </section>
+
+              <div class="bici-feedback form-feedback" role="status" aria-live="polite" aria-atomic="true">
+                <p id="bici-feedback-sending" hidden>Preparando solicitud...</p>
+                <p id="bici-feedback-success" hidden>Solicitud preparada. El payload quedo listo para la siguiente etapa.</p>
+                <p id="bici-feedback-error" hidden>Revisa los campos marcados.</p>
+              </div>
+
+              <details class="bici-payload" open>
+                <summary>Payload interno de referencia</summary>
+                <pre id="bici-payload-preview">{ "estado": "Completa el formulario para ver el payload" }</pre>
+              </details>
+
+              <button type="submit" id="bici-submit-button" class="primary-action">Solicitar cobertura</button>
+              <p class="panel__footnote">En breve nos comunicaremos para pedirte las fotos y continuar con la emision.</p>
+            </form>
+          </aside>
+        </div>
       </section>
+
+      <section class="app-view app-view--bolso" data-view="bolso" aria-labelledby="bolso-title" hidden>
+        <div class="section-topline">
+          <button type="button" class="back-link" data-view-target="home">Volver al inicio</button>
+          <span class="section-topline__tag">Bolso / AP / Celular</span>
+        </div>
+
+        <div class="bolso-layout">
+          <section class="panel panel--proposal" aria-labelledby="bolso-title">
+            <p class="panel__eyebrow">Propuesta vigente</p>
+            <h2 id="bolso-title">Bolso / AP / Celular</h2>
+            <p class="panel__lead">
+              Se conserva el flujo actual de emision y la propuesta PDF ya disponible, mientras
+              reorganizamos la portada y la navegacion general.
+            </p>
+            <div class="proposal-summary">
+              <article>
+                <strong>Estado</strong>
+                <p>Flujo vigente listo para la siguiente etapa.</p>
+              </article>
+              <article>
+                <strong>Adjuntos</strong>
+                <p>TXT y CSV se mantienen como parte del contrato operativo.</p>
+              </article>
+            </div>
+            <a class="panel__link" href="Propuesta AP+Bolso+Celular.pdf" download>Descargar PDF con condiciones</a>
+          </section>
+
+          <section class="panel panel--form" aria-labelledby="bolso-form-title">
+            <p class="panel__eyebrow">Formulario de emision</p>
+            <h3 id="bolso-form-title">Cotizador / Formulario</h3>
+            <p class="panel__lead">Completa los datos solicitados para emitir la cobertura.</p>
+
+            <form id="quote-form" action="#" method="post" autocomplete="on" novalidate>
+              <div class="field">
+                <label for="fullName">Nombre y Apellido</label>
+                <input type="text" id="fullName" name="fullName" autocomplete="name" aria-describedby="fullName-error" required>
+                <p class="field__error" id="fullName-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="dni">DNI</label>
+                <input type="text" id="dni" name="dni" inputmode="numeric" autocomplete="off" pattern="[0-9]{7,8}" minlength="7" maxlength="8" aria-describedby="dni-error" required>
+                <p class="field__error" id="dni-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="birthDate">Fecha de Nacimiento</label>
+                <input type="date" id="birthDate" name="birthDate" autocomplete="bday" aria-describedby="birthDate-error" required>
+                <p class="field__error" id="birthDate-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="email">Email de contacto</label>
+                <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-error" required>
+                <p class="field__error" id="email-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="phone">Telefono / Celular</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phone-error" required>
+                <p class="field__error" id="phone-error" hidden></p>
+              </div>
+
+              <div class="form-feedback" role="status" aria-live="polite" aria-atomic="true">
+                <p id="feedback-sending" hidden>Enviando...</p>
+                <p id="feedback-success" hidden>Emision exitosa. Recibiras un correo de confirmacion.</p>
+                <p id="feedback-error" hidden>Error al procesar.</p>
+              </div>
+
+              <button type="submit" id="submit-button" class="primary-action">Emitir cobertura</button>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="app-view app-view--baja" data-view="baja" aria-labelledby="baja-title" hidden>
+        <div class="section-topline">
+          <button type="button" class="back-link" data-view-target="home">Volver al inicio</button>
+          <span class="section-topline__tag">Solicitud de baja</span>
+        </div>
+
+        <div class="baja-layout">
+          <section class="panel panel--proposal" aria-labelledby="baja-title">
+            <p class="panel__eyebrow">Solicitud secundaria</p>
+            <h2 id="baja-title">Solicita la baja de tu seguro</h2>
+            <p class="panel__lead">
+              Este espacio queda listo para el formulario de anulacion sin mezclarlo con la emision
+              de los productos principales.
+            </p>
+            <div class="proposal-summary">
+              <article>
+                <strong>Alcance</strong>
+                <p>Sin patente, vehiculo ni tipo de vehiculo.</p>
+              </article>
+              <article>
+                <strong>Observaciones</strong>
+                <p>Campo opcional para motivo o detalle adicional.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel panel--request panel--baja-form" aria-labelledby="baja-form-title">
+            <p class="panel__eyebrow">Formulario de baja</p>
+            <h3 id="baja-form-title">Completa tus datos</h3>
+            <div class="request-intro">
+              <span class="request-intro__icon" aria-hidden="true">&gt;</span>
+              <p>Pedinos la anulacion de manera simple. No hace falta ingresar patente ni datos de vehiculo.</p>
+            </div>
+
+            <form id="baja-form" class="baja-form" action="#" method="post" novalidate>
+              <div class="form-grid form-grid--baja">
+                <label class="field">
+                  <span>Nombre</span>
+                  <input type="text" id="bajaFirstName" name="firstName" autocomplete="given-name" aria-describedby="baja-firstName-error" required>
+                  <p class="field__error" id="baja-firstName-error" hidden></p>
+                </label>
+
+                <label class="field">
+                  <span>Apellido</span>
+                  <input type="text" id="bajaLastName" name="lastName" autocomplete="family-name" aria-describedby="baja-lastName-error" required>
+                  <p class="field__error" id="baja-lastName-error" hidden></p>
+                </label>
+
+                <label class="field">
+                  <span>DNI</span>
+                  <input type="text" id="bajaDni" name="dni" inputmode="numeric" autocomplete="off" pattern="[0-9]{7,8}" minlength="7" maxlength="8" aria-describedby="baja-dni-error" required>
+                  <p class="field__error" id="baja-dni-error" hidden></p>
+                </label>
+
+                <label class="field">
+                  <span>Email</span>
+                  <input type="email" id="bajaEmail" name="email" autocomplete="email" aria-describedby="baja-email-error" required>
+                  <p class="field__error" id="baja-email-error" hidden></p>
+                </label>
+
+                <label class="field">
+                  <span>Area</span>
+                  <input type="text" id="bajaArea" name="area" inputmode="numeric" autocomplete="off" minlength="2" maxlength="4" aria-describedby="baja-area-error" required>
+                  <p class="field__error" id="baja-area-error" hidden></p>
+                </label>
+
+                <label class="field">
+                  <span>Telefono</span>
+                  <input type="tel" id="bajaPhone" name="phone" inputmode="numeric" autocomplete="tel" aria-describedby="baja-phone-error" required>
+                  <p class="field__error" id="baja-phone-error" hidden></p>
+                </label>
+
+                <label class="field field--full">
+                  <span>Observaciones o motivo</span>
+                  <textarea id="bajaReason" name="reason" rows="4" aria-describedby="baja-reason-error" placeholder="Opcional"></textarea>
+                  <p class="field__error" id="baja-reason-error" hidden></p>
+                </label>
+              </div>
+
+              <div class="baja-feedback form-feedback" role="status" aria-live="polite" aria-atomic="true">
+                <p id="baja-feedback-sending" hidden>Preparando solicitud de baja...</p>
+                <p id="baja-feedback-success" hidden>Solicitud de baja enviada. Te contactaremos por correo.</p>
+                <p id="baja-feedback-error" hidden>Revisa los campos marcados.</p>
+              </div>
+
+              <button type="submit" id="baja-submit-button" class="primary-action">Solicitar baja</button>
+              <p class="panel__footnote">La solicitud queda registrada para seguimiento interno.</p>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <footer class="ssn-footer" aria-label="Pie institucional SSN">
+        <div class="ssn-footer__item">
+          <span class="ssn-footer__label">N de matricula SSN</span>
+          <strong>93279</strong>
+        </div>
+        <div class="ssn-footer__item">
+          <span class="ssn-footer__label">Departamento de Orientacion y Asistencia al Asegurado</span>
+          <strong>0800-666-8400</strong>
+        </div>
+        <div class="ssn-footer__item">
+          <a href="https://www.argentina.gob.ar/ssn" target="_blank" rel="noreferrer">www.argentina.gob.ar/ssn</a>
+        </div>
+        <div class="ssn-footer__brand">SSN Superintendencia de Seguros de la Nacion</div>
+      </footer>
     </main>
   </body>
 </html>

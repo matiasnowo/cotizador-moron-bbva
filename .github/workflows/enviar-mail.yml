@@ -10,119 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Parsear Payload y Ejecutar Flujo EWS con Curl NTLM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ejecutar envio
         env:
           EXCHANGE_USER: ${{ secrets.EXCHANGE_USER }}
           EXCHANGE_PASS: ${{ secrets.EXCHANGE_PASS }}
           DESTINATARIO_MAIL: ${{ secrets.DESTINATARIO_MAIL }}
+          PAYLOAD_JSON: ${{ toJson(github.event.client_payload) }}
           NOM: ${{ github.event.client_payload.nombre }}
           DNI: ${{ github.event.client_payload.dni }}
           FNAC: ${{ github.event.client_payload.fechaNacimiento }}
           EMAIL: ${{ github.event.client_payload.email }}
           TEL: ${{ github.event.client_payload.telefono }}
-        run: |
-          URL_EWS="https://mail.centroatencionmoron.com/EWS/Exchange.asmx"
-          
-          echo "Generando contenido del adjunto..."
-          TXT_CONTENT="Hola Mundo de prueba desde GitHub Actions para el Municipio de Moron."
-          TXT_BASE64=$(echo -n "$TXT_CONTENT" | base64 | tr -d '\n')
-
-          echo "========================================="
-          echo "PASO A: Creando borrador (CreateItem)..."
-          echo "========================================="
-          
-          SOAP_CREATE="<?xml version=\"1.0\" encoding=\"utf-8\"?>
-          <soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:m=\"http://schemas.microsoft.com/exchange/services/2006/messages\" xmlns:t=\"http://schemas.microsoft.com/exchange/services/2006/types\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">
-            <soap:Header><t:RequestServerVersion Version=\"Exchange2013\" /></soap:Header>
-            <soap:Body>
-              <m:CreateItem MessageDisposition=\"SaveOnly\">
-                <m:SavedItemFolderId><t:DistinguishedFolderId Id=\"drafts\" /></m:SavedItemFolderId>
-                <m:Items>
-                  <t:Message>
-                    <t:Subject>Nueva Emision de Cobertura - Solicitante: $NOM</t:Subject>
-                    <t:Body BodyType=\"HTML\"><![CDATA[
-                      <div style=\"font-family: Arial, sans-serif;\">
-                        <h2>Nueva Emision de Cobertura</h2>
-                        <ul>
-                          <li><strong>Nombre:</strong> $NOM</li>
-                          <li><strong>DNI:</strong> $DNI</li>
-                          <li><strong>Fecha de nacimiento:</strong> $FNAC</li>
-                          <li><strong>Email:</strong> $EMAIL</li>
-                          <li><strong>Telefono:</strong> $TEL</li>
-                        </ul>
-                      </div>
-                    ]]></t:Body>
-                    <t:ToRecipients><t:Mailbox><t:EmailAddress>$DESTINATARIO_MAIL</t:EmailAddress></t:Mailbox></t:ToRecipients>
-                  </t:Message>
-                </m:Items>
-              </m:CreateItem>
-            </soap:Body>
-          </soap:Envelope>"
-
-          RES_CREATE=$(curl -k --ntlm -u "$EXCHANGE_USER:$EXCHANGE_PASS" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: \"http://schemas.microsoft.com/exchange/services/2006/messages/CreateItem\"" -d "$SOAP_CREATE" "$URL_EWS")
-          
-          ITEM_ID=$(echo "$RES_CREATE" | grep -oP 'Id="[^"]+"' | head -n 1 | sed 's/Id="//;s/"//')
-          CHANGE_KEY=$(echo "$RES_CREATE" | grep -oP 'ChangeKey="[^"]+"' | head -n 1 | sed 's/ChangeKey="//;s/"//')
-
-          if [ -z "$ITEM_ID" ]; then
-            echo "Error critico: No se pudo obtener el ItemId de Exchange corporativo."
-            echo "Respuesta del servidor:"
-            echo "$RES_CREATE"
-            exit 1
-          fi
-          echo "Borrador creado con exito."
-
-          echo "========================================="
-          echo "PASO B: Subiendo archivo adjunto (CreateAttachment)..."
-          echo "========================================="
-          
-          SOAP_ATTACH="<?xml version=\"1.0\" encoding=\"utf-8\"?>
-          <soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:m=\"http://schemas.microsoft.com/exchange/services/2006/messages\" xmlns:t=\"http://schemas.microsoft.com/exchange/services/2006/types\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">
-            <soap:Header><t:RequestServerVersion Version=\"Exchange2013\" /></soap:Header>
-            <soap:Body>
-              <m:CreateAttachment>
-                <m:ParentItemId Id=\"$ITEM_ID\" ChangeKey=\"$CHANGE_KEY\" />
-                <m:Attachments>
-                  <t:FileAttachment>
-                    <t:Name>solicitud-moron.txt</t:Name>
-                    <t:Content>$TXT_BASE64</t:Content>
-                  </t:FileAttachment>
-                </m:Attachments>
-              </m:CreateAttachment>
-            </soap:Body>
-          </soap:Envelope>"
-
-          RES_ATTACH=$(curl -k --ntlm -u "$EXCHANGE_USER:$EXCHANGE_PASS" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: \"http://schemas.microsoft.com/exchange/services/2006/messages/CreateAttachment\"" -d "$SOAP_ATTACH" "$URL_EWS")
-          
-          NEW_CHANGE_KEY=$(echo "$RES_ATTACH" | grep -oP 'RootItemChangeKey="[^"]+"' | head -n 1 | sed 's/RootItemChangeKey="//;s/"//')
-          
-          if [ -z "$NEW_CHANGE_KEY" ]; then
-             NEW_CHANGE_KEY=$CHANGE_KEY
-          fi
-          echo "Archivo adjunto inyectado correctamente."
-
-          echo "========================================="
-          echo "PASO C: Despachando mail final (SendItem)..."
-          echo "========================================="
-          
-          SOAP_SEND="<?xml version=\"1.0\" encoding=\"utf-8\"?>
-          <soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:m=\"http://schemas.microsoft.com/exchange/services/2006/messages\" xmlns:t=\"http://schemas.microsoft.com/exchange/services/2006/types\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">
-            <soap:Header><t:RequestServerVersion Version=\"Exchange2013\" /></soap:Header>
-            <soap:Body>
-              <m:SendItem SaveItemToFolder=\"true\">
-                <m:ItemIds>
-                  <t:ItemId Id=\"$ITEM_ID\" ChangeKey=\"$NEW_CHANGE_KEY\" />
-                </m:ItemIds>
-              </m:SendItem>
-            </soap:Body>
-          </soap:Envelope>"
-
-          RES_SEND=$(curl -k --ntlm -u "$EXCHANGE_USER:$EXCHANGE_PASS" -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: \"http://schemas.microsoft.com/exchange/services/2006/messages/SendItem\"" -d "$SOAP_SEND" "$URL_EWS")
-
-          if echo "$RES_SEND" | grep -q "NoError"; then
-            echo "¡ÉXITO TOTAL! El mail con el archivo adjunto se envió a través de Exchange NTLM."
-          else
-            echo "Error en el Paso C final:"
-            echo "$RES_SEND"
-            exit 1
-          fi
+        run: bash .github/scripts/send-ews.sh
