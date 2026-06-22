@@ -17,7 +17,6 @@ const BICI_PLAN_CATALOG = {
     limit: "Robo hasta $200.000",
     franchise: "10% de la suma asegurada",
     period: "Trimestral",
-    badge: "Plan 200",
   },
   "400": {
     id: "400",
@@ -27,7 +26,6 @@ const BICI_PLAN_CATALOG = {
     limit: "Robo hasta $400.000",
     franchise: "10% de la suma asegurada",
     period: "Trimestral",
-    badge: "Mas elegido",
   },
   "600": {
     id: "600",
@@ -37,7 +35,6 @@ const BICI_PLAN_CATALOG = {
     limit: "Robo hasta $600.000",
     franchise: "10% de la suma asegurada",
     period: "Trimestral",
-    badge: "Plan 600",
   },
 };
 
