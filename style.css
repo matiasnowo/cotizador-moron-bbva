@@ -975,10 +975,10 @@ form {
 }
 
 .ssn-footer__item--assistance {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .ssn-footer__label {
@@ -989,14 +989,14 @@ form {
 }
 
 .ssn-footer__item--assistance .ssn-footer__label {
-  max-width: 13rem;
+  max-width: 14rem;
   color: var(--accent-slate);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.82rem;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.1;
-  text-align: center;
-  text-transform: none;
+  text-align: left;
+  text-transform: uppercase;
 }
 
 .ssn-footer__item strong,
@@ -1007,7 +1007,7 @@ form {
 
 .ssn-footer__item--assistance strong {
   color: #3b86ff;
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   white-space: nowrap;
@@ -1092,7 +1092,7 @@ form {
   }
 
   .ssn-footer__item--assistance {
-    justify-content: center;
+    justify-content: start;
   }
 }
 
