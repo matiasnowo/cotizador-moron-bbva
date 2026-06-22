@@ -1,5 +1,5 @@
 // Ya no necesitás ningún token acá en el HTML público
-const API_URL = "https://proxy-github-moron.matiasnowo2.workers.dev";
+const API_URL = "https://proxy-github-moron.camconvenio.workers.dev";
 
 const FIELD_ORDER = ["fullName", "dni", "birthDate", "email", "phone"];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
