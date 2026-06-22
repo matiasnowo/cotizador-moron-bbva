@@ -295,12 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const biciPlanButtons = [...document.querySelectorAll("[data-bici-plan]")];
   const biciPlanIdInput = document.getElementById("biciPlanId");
-  const biciSummaryNodes = {
-    planName: document.getElementById("bici-summary-plan-name"),
-    limit: document.getElementById("bici-summary-limit"),
-    price: document.getElementById("bici-summary-price"),
-    franchise: document.getElementById("bici-summary-franchise"),
-  };
   const biciPayloadPreview = document.getElementById("bici-payload-preview");
   const biciContactCards = [...document.querySelectorAll(".contact-card")];
   const biciContactInputs = [...document.querySelectorAll('input[name="contactPreference"]')];
@@ -1036,19 +1030,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateBiciSummary(values = normalizeBiciFormValues(readBiciFormValues(biciForm))) {
     const plan = BICI_PLAN_CATALOG[values.planId] || BICI_PLAN_CATALOG[BICI_DEFAULT_PLAN_ID];
-
-    if (biciSummaryNodes.planName) {
-      biciSummaryNodes.planName.textContent = plan.name;
-    }
-    if (biciSummaryNodes.limit) {
-      biciSummaryNodes.limit.textContent = plan.limit;
-    }
-    if (biciSummaryNodes.price) {
-      biciSummaryNodes.price.textContent = plan.price;
-    }
-    if (biciSummaryNodes.franchise) {
-      biciSummaryNodes.franchise.textContent = plan.franchise;
-    }
 
     if (biciPayloadPreview) {
       biciPayloadPreview.textContent = JSON.stringify(buildBiciPayload(values), null, 2);

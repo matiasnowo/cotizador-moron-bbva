@@ -650,7 +650,7 @@ button {
 .plan-card__amount {
   color: var(--accent-slate);
   font-size: clamp(1.95rem, 3.8vw, 2.55rem);
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: -0.05em;
   line-height: 1.02;
   text-align: center;
@@ -658,8 +658,8 @@ button {
 
 .plan-card__price {
   color: var(--accent-slate);
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-size: 1rem;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -769,7 +769,7 @@ button {
 .benefit-strip article {
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: 0.85rem;
+  column-gap: 0.75rem;
   row-gap: 0.18rem;
   align-items: start;
 }
@@ -777,12 +777,12 @@ button {
 .benefit-strip__icon {
   display: grid;
   place-items: center;
-  width: 2.65rem;
-  height: 2.65rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 16px;
   background: rgba(16, 24, 40, 0.04);
   color: var(--accent-slate);
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 900;
   grid-row: 1 / span 2;
 }
@@ -792,6 +792,12 @@ button {
   display: block;
   margin-bottom: 0.25rem;
   color: var(--accent-slate);
+  font-size: 0.97rem;
+}
+
+.benefit-strip p {
+  font-size: 0.94rem;
+  line-height: 1.45;
 }
 
 .request-intro {
@@ -1094,7 +1100,7 @@ form {
   }
 
   .benefit-strip {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1124,33 +1130,6 @@ form {
 .panel--bici-form form {
   display: grid;
   gap: var(--space-4);
-}
-
-.bici-summary {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.bici-summary article {
-  display: grid;
-  gap: 0.2rem;
-  padding: 0.95rem 1rem;
-  border: 1px solid rgba(16, 24, 40, 0.08);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.bici-summary span {
-  color: var(--text-soft);
-  font-size: 0.84rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.bici-summary strong {
-  color: var(--accent-slate);
-  font-size: 1.02rem;
 }
 
 .bici-form {
@@ -1318,10 +1297,6 @@ form {
 
 @media (min-width: 760px) {
   .form-grid--bici {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .bici-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
