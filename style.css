@@ -284,10 +284,10 @@ button {
 
 .hero-card h2 {
   margin: 0 auto;
-  max-width: 20ch;
+  width: min(100%, 26ch);
   color: var(--accent-slate);
   font-size: clamp(1.55rem, 3vw, 2.45rem);
-  line-height: 1.08;
+  line-height: 1.04;
   letter-spacing: -0.03em;
 }
 
@@ -424,14 +424,15 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  min-height: 50px;
-  padding: 0.9rem 1.2rem;
+  min-height: 42px;
+  padding: 0.7rem 1rem;
   border-radius: 999px;
-  color: #fff;
-  font-weight: 800;
+  color: var(--accent-slate);
+  font-size: 0.92rem;
+  font-weight: 700;
   letter-spacing: 0.01em;
   text-decoration: none;
-  box-shadow: 0 16px 30px rgba(16, 24, 40, 0.16);
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.08);
   transition:
     transform 160ms ease,
     box-shadow 160ms ease,
@@ -442,25 +443,29 @@ button {
 .primary-action:hover,
 .dismissal-card__button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 20px 34px rgba(16, 24, 40, 0.2);
+  box-shadow: 0 14px 24px rgba(16, 24, 40, 0.12);
 }
 
 .product-card__cta--green {
-  background: linear-gradient(135deg, var(--accent-green), #48b56f);
+  background: #fff;
+  color: var(--accent-green-dark);
+  border: 1px solid rgba(47, 154, 90, 0.22);
 }
 
 .product-card__cta--green:hover {
-  background: linear-gradient(135deg, var(--accent-green-dark), #3aa15e);
+  background: rgba(47, 154, 90, 0.05);
 }
 
 .product-card__cta--purple,
 .dismissal-card__button {
-  background: linear-gradient(135deg, var(--accent-purple), #8a66ff);
+  background: #fff;
+  color: var(--accent-purple-dark);
+  border: 1px solid rgba(109, 75, 220, 0.22);
 }
 
 .product-card__cta--purple:hover,
 .dismissal-card__button:hover {
-  background: linear-gradient(135deg, var(--accent-purple-dark), #7a57ff);
+  background: rgba(109, 75, 220, 0.05);
 }
 
 .dismissal-card {
@@ -946,6 +951,10 @@ form {
 .primary-action {
   width: 100%;
   background: linear-gradient(135deg, var(--accent-burgundy), #b3265e);
+  color: #fff;
+  font-weight: 800;
+  min-height: 48px;
+  padding: 0.9rem 1.15rem;
 }
 
 .primary-action__icon {
@@ -983,6 +992,13 @@ form {
   gap: 0.1rem;
 }
 
+.ssn-footer__item--assistance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
 .ssn-footer__label {
   font-size: 0.76rem;
   font-weight: 700;
@@ -990,10 +1006,29 @@ form {
   text-transform: uppercase;
 }
 
+.ssn-footer__item--assistance .ssn-footer__label {
+  max-width: 13rem;
+  color: var(--accent-slate);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: none;
+}
+
 .ssn-footer__item strong,
 .ssn-footer__brand {
   color: var(--accent-slate);
   font-weight: 800;
+}
+
+.ssn-footer__item--assistance strong {
+  color: #3b86ff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 .ssn-footer__item a {
@@ -1072,6 +1107,10 @@ form {
   .ssn-footer {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: start;
+  }
+
+  .ssn-footer__item--assistance {
+    justify-content: center;
   }
 }
 
