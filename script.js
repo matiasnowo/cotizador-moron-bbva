@@ -718,8 +718,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     biciPlanButtons.forEach((button) => {
       const isSelected = String(button.dataset.biciPlan ?? "") === resolvedPlanId;
+      const actionLabel = button.querySelector(".plan-card__action-label");
+      const defaultLabel = String(button.dataset.planDefaultLabel ?? "Seleccionar");
+      const selectedLabel = String(button.dataset.planSelectedLabel ?? "Seleccionado");
+
       button.classList.toggle("is-selected", isSelected);
       button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+
+      if (actionLabel) {
+        actionLabel.textContent = isSelected ? selectedLabel : defaultLabel;
+      }
     });
 
     if (biciErrorNodes.planId) {
@@ -966,19 +974,19 @@ document.addEventListener("DOMContentLoaded", () => {
         formBusy: false,
       },
       submitting: {
-        buttonText: "Preparando...",
+        buttonText: "Enviando solicitud...",
         buttonClass: "is-loading",
         buttonDisabled: true,
         feedbackKey: "sending",
-        defaultMessage: "Preparando solicitud...",
+        defaultMessage: "Enviando solicitud...",
         formBusy: true,
       },
       success: {
-        buttonText: "Solicitud preparada",
+        buttonText: "Solicitud enviada",
         buttonClass: "is-success",
         buttonDisabled: false,
         feedbackKey: "success",
-        defaultMessage: "Solicitud preparada. El payload quedo listo para la siguiente etapa.",
+        defaultMessage: "Solicitud enviada. Te contactaremos para continuar con la cobertura.",
         formBusy: false,
       },
       error: {
@@ -1002,8 +1010,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (biciSubmitButton) {
+      const buttonLabelNode = biciSubmitButton.querySelector(".primary-action__label");
       biciSubmitButton.disabled = config.buttonDisabled;
-      biciSubmitButton.textContent = config.buttonText;
+      if (buttonLabelNode) {
+        buttonLabelNode.textContent = config.buttonText;
+      } else {
+        biciSubmitButton.textContent = config.buttonText;
+      }
       biciSubmitButton.classList.remove("is-loading", "is-success", "is-error");
       if (config.buttonClass) {
         biciSubmitButton.classList.add(config.buttonClass);
