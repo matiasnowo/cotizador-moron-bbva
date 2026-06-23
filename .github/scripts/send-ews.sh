@@ -78,6 +78,58 @@ contact_label() {
   esac
 }
 
+digits_only() {
+  printf '%s' "${1:-}" | tr -cd '0-9'
+}
+
+sanitize_interface_value() {
+  local value max_length
+  value="${1:-}"
+  max_length="${2:-0}"
+  value="$(printf '%s' "$value" | tr '\r\n;' '   ' | sed 's/[[:space:]]\+/ /g;s/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+  if [ "$max_length" -gt 0 ]; then
+    value="${value:0:$max_length}"
+  fi
+
+  printf '%s' "$value"
+}
+
+date_to_yyyymmdd() {
+  local value
+  value="$(sanitize_interface_value "${1:-}")"
+
+  if [[ "$value" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})$ ]]; then
+    printf '%s%s%s' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}"
+    return
+  fi
+
+  value="$(digits_only "$value")"
+  if [ "${#value}" -eq 8 ]; then
+    printf '%s' "$value"
+  fi
+}
+
+split_full_name() {
+  local full_name first_names last_name
+  full_name="$(sanitize_interface_value "${1:-}" 80)"
+
+  if [[ "$full_name" == *" "* ]]; then
+    first_names="${full_name% *}"
+    last_name="${full_name##* }"
+  else
+    first_names="$full_name"
+    last_name="$full_name"
+  fi
+
+  printf '%s\t%s' "$(sanitize_interface_value "$last_name" 40)" "$(sanitize_interface_value "$first_names" 40)"
+}
+
+join_semicolon_row() {
+  local IFS=';'
+  printf '%s' "$*"
+}
+
 send_bici() {
   local request_id requested_at plan_id plan_name plan_limit plan_price plan_franchise plan_period
   local full_name dni_cuil email_addr phone address postal_code locality province
@@ -255,17 +307,94 @@ EOF
 
 send_bolso() {
   local nombre dni fecha_nacimiento email_addr telefono
-  local txt_content txt_base64 soap_create res_create item_id change_key soap_attach res_attach new_change_key soap_send res_send
+  local raw_nombre apellido nombres dni_digits id_venta fecha_alta fecha_nacimiento_yyyymmdd
+  local phone_interface email_interface txt_row csv_row txt_content csv_content txt_base64 csv_base64
+  local soap_create res_create item_id change_key soap_attach res_attach new_change_key soap_send res_send
+  local -a txt_fields csv_fields csv_headers
 
-  nombre="$(escaped_or_no_info "$(json_get '.nombre // .fullName')")"
+  raw_nombre="$(json_get '.nombre // .fullName')"
+  IFS=$'\t' read -r apellido nombres <<< "$(split_full_name "$raw_nombre")"
+
+  dni_digits="$(digits_only "$(json_get '.dni')")"
+  fecha_alta="$(TZ="$TZ_BSAS" date '+%Y%m%d')"
+  fecha_nacimiento_yyyymmdd="$(date_to_yyyymmdd "$(json_get '.fechaNacimiento')")"
+  id_venta="$(TZ="$TZ_BSAS" date '+%y%m%d%H%M%S')${dni_digits: -4}"
+  id_venta="$(sanitize_interface_value "$id_venta" 16)"
+  phone_interface="$(sanitize_interface_value "$(json_get '.telefono // .phone')" 20)"
+  email_interface="$(sanitize_interface_value "$(json_get '.email')" 40)"
+
+  for ((i = 0; i < 72; i++)); do
+    txt_fields[$i]=""
+    csv_fields[$i]=""
+  done
+
+  txt_fields[0]="000004"
+  txt_fields[1]="0005"
+  txt_fields[2]="0013"
+  txt_fields[3]="$id_venta"
+  txt_fields[4]="$fecha_alta"
+  txt_fields[5]="CUIL"
+  txt_fields[6]="$(sanitize_interface_value "$dni_digits" 11)"
+  txt_fields[7]="$apellido"
+  txt_fields[8]="$nombres"
+  txt_fields[9]="1"
+  txt_fields[10]="$(sanitize_interface_value "$dni_digits" 8)"
+  txt_fields[11]=""
+  txt_fields[12]="$fecha_nacimiento_yyyymmdd"
+  txt_fields[13]="1"
+  txt_fields[14]="ARGENTINA"
+  txt_fields[16]="0001"
+  txt_fields[28]="$phone_interface"
+  txt_fields[30]="$email_interface"
+  txt_fields[31]="S"
+  txt_fields[32]="000090"
+  txt_fields[33]="154"
+  txt_fields[35]="50000000"
+  txt_fields[36]="01"
+  txt_fields[37]="01"
+  txt_fields[38]="0003"
+  txt_fields[65]="N"
+
+  csv_fields=("${txt_fields[@]}")
+  csv_fields[0]="4"
+  csv_fields[1]="5"
+  csv_fields[2]="13"
+  csv_fields[16]="1"
+  csv_fields[32]="90"
+  csv_fields[36]="1"
+  csv_fields[37]="1"
+  csv_fields[38]="3"
+
+  csv_headers=(
+    "Canal" "S.Canal" "Linea" "ID Venta" "Fec Alta" "Cod.Id" "Nro.Id"
+    "Apellido" "Nombre" "T.Doc." "N.Doc." "Sexo" "F.Nac." "E.C."
+    "Lugar Nac." "C.Nac." "C.Pais" "Calle" "N.Calle" "Piso" "Dpto."
+    "C.Prov." "Partido" "Localidad" "Barrio" "C.Postal" "C.CPA"
+    "Domicilio Ext." "Tel. Fax 1" "Tel. Fax 2" "Email" "P.Mail"
+    "C.Ocup." "P.Cob." "CMonto" "CAseg." "Mpag." "C.Cuo." "C.Tarj."
+    "N.Tarj." "Bco.TC" "Bco.Deb." "Suc.Bco." "Nro.Cta." "CBU"
+    "Calle Inf." "N.Calle Inf." "Piso Inf." "Dpto.Inf." "Dom.Ext.Inf."
+    "C.Prov.Inf." "Partido Inf." "Loc. Inf." "Barrio Inf." "C.Postal Inf."
+    "C.CPA Inf." "Tel.Fax 1" "Tel.Fax 2" "Bco.TC.Aseg." "C.TC.Aseg."
+    "TipoTC.Aseg." "N.TC.Aseg." "Datos Bien 1" "Datos 2" "Datos 3"
+    "Marca UIF" "Premio" "Fec.Proc." "Nro.Poliza" "Nro.Cert."
+    "Observaciones" ""
+  )
+
+  txt_row="$(join_semicolon_row "${txt_fields[@]}");"
+  csv_row="$(join_semicolon_row "${csv_fields[@]}")"
+  txt_content="${txt_row}"$'\n'
+  csv_content="$(join_semicolon_row "${csv_headers[@]}")"$'\n'"${csv_row}"$'\n'
+  txt_base64=$(printf '%s' "$txt_content" | base64 | tr -d '\n')
+  csv_base64=$(printf '%s' "$csv_content" | base64 | tr -d '\n')
+
+  nombre="$(escaped_or_no_info "$raw_nombre")"
   dni="$(escaped_or_no_info "$(json_get '.dni')")"
   fecha_nacimiento="$(escaped_or_no_info "$(json_get '.fechaNacimiento')")"
   email_addr="$(escaped_or_no_info "$(json_get '.email')")"
   telefono="$(escaped_or_no_info "$(json_get '.telefono // .phone')")"
 
-  echo "Generando contenido del adjunto..."
-  txt_content="Hola Mundo de prueba desde GitHub Actions para el Municipio de Moron."
-  txt_base64=$(echo -n "$txt_content" | base64 | tr -d '\n')
+  echo "Generando adjuntos de produccion para bolso..."
 
   echo "========================================="
   echo "PASO A: Creando borrador (CreateItem)..."
@@ -324,8 +453,12 @@ send_bolso() {
       <m:ParentItemId Id=\"$item_id\" ChangeKey=\"$change_key\" />
       <m:Attachments>
         <t:FileAttachment>
-          <t:Name>solicitud-moron.txt</t:Name>
+          <t:Name>ARCHIVO DE ENVIO.txt</t:Name>
           <t:Content>$txt_base64</t:Content>
+        </t:FileAttachment>
+        <t:FileAttachment>
+          <t:Name>ARCHIVO DE SALIDA.csv</t:Name>
+          <t:Content>$csv_base64</t:Content>
         </t:FileAttachment>
       </m:Attachments>
     </m:CreateAttachment>
