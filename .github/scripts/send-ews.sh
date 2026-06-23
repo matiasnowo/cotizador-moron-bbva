@@ -309,7 +309,10 @@ send_bolso() {
   local nombre dni fecha_nacimiento email_addr telefono
   local raw_nombre first_name last_name full_name cuil_digits dni_digits sex_code sex_label civil_status_code civil_status_label
   local id_venta fecha_alta fecha_nacimiento_yyyymmdd birth_place street street_number floor apartment province_code province_name locality postal_code
-  local occupation_code occupation_name phone_interface email_interface txt_row csv_row txt_content csv_content txt_base64 csv_base64
+  local occupation_code occupation_name phone_interface email_interface
+  local coverage_plan_code capital_amount payment_method_code installment_count card_type_code card_number
+  local bank_tc_code bank_debit_code bank_branch_code bank_account_number bank_cbu item_data_1 item_data_2 item_data_3
+  local txt_row csv_row txt_content csv_content txt_base64 csv_base64
   local soap_create res_create item_id change_key soap_attach res_attach new_change_key soap_send res_send
   local -a txt_fields csv_fields csv_headers
 
@@ -345,6 +348,20 @@ send_bolso() {
   postal_code="$(sanitize_interface_value "$(json_get '.postalCode')" 8)"
   occupation_code="$(digits_only "$(json_get '.occupationCode')")"
   occupation_name="$(sanitize_interface_value "$(json_get '.occupationLabel')" 40)"
+  coverage_plan_code="$(digits_only "$(json_get '.coveragePlanCode // .planCode // .coverageCode')")"
+  capital_amount="$(digits_only "$(json_get '.capitalAmount // .insuredAmount // .coverageAmount')")"
+  payment_method_code="$(digits_only "$(json_get '.paymentMethodCode // .payment.methodCode')")"
+  installment_count="$(digits_only "$(json_get '.installmentCount // .payment.installmentCount')")"
+  card_type_code="$(digits_only "$(json_get '.cardTypeCode // .payment.cardTypeCode')")"
+  card_number="$(digits_only "$(json_get '.cardNumber // .payment.cardNumber')")"
+  bank_tc_code="$(digits_only "$(json_get '.bankTcCode // .payment.bankTcCode')")"
+  bank_debit_code="$(digits_only "$(json_get '.bankDebitCode // .payment.bankDebitCode')")"
+  bank_branch_code="$(digits_only "$(json_get '.bankBranchCode // .payment.bankBranchCode')")"
+  bank_account_number="$(digits_only "$(json_get '.bankAccountNumber // .payment.bankAccountNumber')")"
+  bank_cbu="$(digits_only "$(json_get '.bankCbu // .payment.bankCbu')")"
+  item_data_1="$(sanitize_interface_value "$(json_get '.itemData1 // .productData1 // .payment.itemData1')" 79)"
+  item_data_2="$(sanitize_interface_value "$(json_get '.itemData2 // .productData2 // .payment.itemData2')" 79)"
+  item_data_3="$(sanitize_interface_value "$(json_get '.itemData3 // .productData3 // .payment.itemData3')" 79)"
   id_venta="$(TZ="$TZ_BSAS" date '+%y%m%d%H%M%S')${dni_digits: -4}"
   id_venta="$(sanitize_interface_value "$id_venta" 16)"
   phone_interface="$(sanitize_interface_value "$(json_get '.telefono // .phone')" 20)"
@@ -352,6 +369,53 @@ send_bolso() {
 
   if [ -z "$birth_place" ]; then
     birth_place="ARGENTINA"
+  fi
+
+  if [ -z "$coverage_plan_code" ]; then
+    coverage_plan_code="154"
+  fi
+
+  if [ -z "$capital_amount" ]; then
+    capital_amount="50000000"
+  fi
+
+  if [ -z "$payment_method_code" ]; then
+    payment_method_code="01"
+  fi
+
+  if [ -z "$installment_count" ]; then
+    installment_count="01"
+  fi
+
+  if [ -z "$card_type_code" ]; then
+    card_type_code="0003"
+  fi
+
+  if [ "$payment_method_code" = "01" ]; then
+    if [ -z "$card_number" ]; then
+      echo "Faltan datos obligatorios para generar el archivo de bolso: se informa medio de pago con tarjeta pero no se recibio el numero de tarjeta (W99_NTAR / campo 39)."
+      echo "No se enviara un adjunto invalido. Este dato no deberia capturarse en el frontend publico actual."
+      exit 1
+    fi
+  fi
+
+  if [ "$payment_method_code" != "01" ]; then
+    card_type_code=""
+    card_number=""
+  fi
+
+  if [ "$payment_method_code" = "02" ] || [ "$payment_method_code" = "03" ]; then
+    if [ -z "$bank_debit_code" ] && [ -z "$bank_tc_code" ] && [ -z "$bank_account_number" ] && [ -z "$bank_cbu" ]; then
+      echo "Faltan datos bancarios obligatorios para el medio de pago informado en bolso."
+      echo "No se enviara un adjunto invalido."
+      exit 1
+    fi
+  else
+    bank_tc_code=""
+    bank_debit_code=""
+    bank_branch_code=""
+    bank_account_number=""
+    bank_cbu=""
   fi
 
   for ((i = 0; i < 72; i++)); do
@@ -386,11 +450,20 @@ send_bolso() {
   txt_fields[30]="$email_interface"
   txt_fields[31]="S"
   txt_fields[32]="$(printf '%06d' "${occupation_code:-0}" | sed 's/^000000$//')"
-  txt_fields[33]="154"
-  txt_fields[35]="50000000"
-  txt_fields[36]="01"
-  txt_fields[37]="01"
-  txt_fields[38]="0003"
+  txt_fields[33]="$(printf '%03d' "${coverage_plan_code:-0}" | sed 's/^000$//')"
+  txt_fields[35]="$capital_amount"
+  txt_fields[36]="$(printf '%02d' "${payment_method_code:-0}" | sed 's/^00$//')"
+  txt_fields[37]="$(printf '%02d' "${installment_count:-0}" | sed 's/^00$//')"
+  txt_fields[38]="$(printf '%04d' "${card_type_code:-0}" | sed 's/^0000$//')"
+  txt_fields[39]="$card_number"
+  txt_fields[40]="$(printf '%04d' "${bank_tc_code:-0}" | sed 's/^0000$//')"
+  txt_fields[41]="$(printf '%04d' "${bank_debit_code:-0}" | sed 's/^0000$//')"
+  txt_fields[42]="$(printf '%04d' "${bank_branch_code:-0}" | sed 's/^0000$//')"
+  txt_fields[43]="$bank_account_number"
+  txt_fields[44]="$bank_cbu"
+  txt_fields[62]="$item_data_1"
+  txt_fields[63]="$item_data_2"
+  txt_fields[64]="$item_data_3"
   txt_fields[65]="N"
 
   csv_fields=("${txt_fields[@]}")
@@ -400,9 +473,13 @@ send_bolso() {
   csv_fields[16]="1"
   csv_fields[21]="$province_code"
   csv_fields[32]="$occupation_code"
-  csv_fields[36]="1"
-  csv_fields[37]="1"
-  csv_fields[38]="3"
+  csv_fields[33]="$(printf '%d' "${coverage_plan_code:-0}" | sed 's/^0$//')"
+  csv_fields[36]="$(printf '%d' "${payment_method_code:-0}" | sed 's/^0$//')"
+  csv_fields[37]="$(printf '%d' "${installment_count:-0}" | sed 's/^0$//')"
+  csv_fields[38]="$(printf '%d' "${card_type_code:-0}" | sed 's/^0$//')"
+  csv_fields[40]="$(printf '%d' "${bank_tc_code:-0}" | sed 's/^0$//')"
+  csv_fields[41]="$(printf '%d' "${bank_debit_code:-0}" | sed 's/^0$//')"
+  csv_fields[42]="$(printf '%d' "${bank_branch_code:-0}" | sed 's/^0$//')"
 
   csv_headers=(
     "Canal" "S.Canal" "Linea" "ID Venta" "Fec Alta" "Cod.Id" "Nro.Id"
