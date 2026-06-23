@@ -420,34 +420,162 @@
             <p class="panel__lead">Completa los datos solicitados para emitir la cobertura.</p>
 
             <form id="quote-form" action="#" method="post" autocomplete="on" novalidate>
-              <div class="field">
-                <label for="fullName">Nombre y Apellido</label>
-                <input type="text" id="fullName" name="fullName" autocomplete="name" aria-describedby="fullName-error" required>
-                <p class="field__error" id="fullName-error" hidden></p>
-              </div>
+              <div class="form-grid form-grid--bolso">
+                <div class="field">
+                  <label for="firstName">Nombre</label>
+                  <input type="text" id="firstName" name="firstName" autocomplete="given-name" aria-describedby="firstName-error" placeholder="Ingresa tu nombre" required>
+                  <p class="field__error" id="firstName-error" hidden></p>
+                </div>
 
-              <div class="field">
-                <label for="dni">DNI</label>
-                <input type="text" id="dni" name="dni" inputmode="numeric" autocomplete="off" pattern="[0-9]{7,8}" minlength="7" maxlength="8" aria-describedby="dni-error" required>
-                <p class="field__error" id="dni-error" hidden></p>
-              </div>
+                <div class="field">
+                  <label for="lastName">Apellido</label>
+                  <input type="text" id="lastName" name="lastName" autocomplete="family-name" aria-describedby="lastName-error" placeholder="Ingresa tu apellido" required>
+                  <p class="field__error" id="lastName-error" hidden></p>
+                </div>
 
-              <div class="field">
-                <label for="birthDate">Fecha de Nacimiento</label>
-                <input type="date" id="birthDate" name="birthDate" autocomplete="bday" aria-describedby="birthDate-error" required>
-                <p class="field__error" id="birthDate-error" hidden></p>
-              </div>
+                <div class="field">
+                  <label for="cuil">CUIL</label>
+                  <input type="text" id="cuil" name="cuil" inputmode="numeric" autocomplete="off" pattern="[0-9]{11}" minlength="11" maxlength="11" aria-describedby="cuil-error" placeholder="Ingresa tu CUIL" required>
+                  <p class="field__error" id="cuil-error" hidden></p>
+                </div>
 
-              <div class="field">
-                <label for="email">Email de contacto</label>
-                <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-error" required>
-                <p class="field__error" id="email-error" hidden></p>
-              </div>
+                <div class="field">
+                  <label for="dni">DNI</label>
+                  <input type="text" id="dni" name="dni" inputmode="numeric" autocomplete="off" pattern="[0-9]{7,8}" minlength="7" maxlength="8" aria-describedby="dni-error" placeholder="Ingresa tu DNI" required>
+                  <p class="field__error" id="dni-error" hidden></p>
+                </div>
 
-              <div class="field">
-                <label for="phone">Telefono / Celular</label>
-                <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phone-error" required>
-                <p class="field__error" id="phone-error" hidden></p>
+                <div class="field">
+                  <label for="sex">Sexo</label>
+                  <select id="sex" name="sex" aria-describedby="sex-error" required>
+                    <option value="">Seleccionar sexo</option>
+                    <option value="1">Masculino</option>
+                    <option value="2">Femenino</option>
+                  </select>
+                  <p class="field__error" id="sex-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="civilStatus">Estado civil</label>
+                  <select id="civilStatus" name="civilStatus" aria-describedby="civilStatus-error" required>
+                    <option value="">Seleccionar estado civil</option>
+                    <option value="1">Soltero</option>
+                    <option value="2">Casado</option>
+                    <option value="3">Divorciado</option>
+                    <option value="4">Conviviente</option>
+                    <option value="5">Separado de hecho</option>
+                    <option value="6">Viudo</option>
+                    <option value="7">Separado</option>
+                  </select>
+                  <p class="field__error" id="civilStatus-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="birthDate">Fecha de nacimiento</label>
+                  <input type="date" id="birthDate" name="birthDate" autocomplete="bday" aria-describedby="birthDate-error" required>
+                  <p class="field__error" id="birthDate-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="birthPlace">Lugar de nacimiento</label>
+                  <input type="text" id="birthPlace" name="birthPlace" autocomplete="off" aria-describedby="birthPlace-error" placeholder="Ingresa tu lugar de nacimiento" required>
+                  <p class="field__error" id="birthPlace-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="street">Calle</label>
+                  <input type="text" id="street" name="street" autocomplete="street-address" aria-describedby="street-error" placeholder="Ingresa tu calle" required>
+                  <p class="field__error" id="street-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="streetNumber">Numero</label>
+                  <input type="text" id="streetNumber" name="streetNumber" autocomplete="off" aria-describedby="streetNumber-error" placeholder="Ingresa tu numero" required>
+                  <p class="field__error" id="streetNumber-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="floor">Piso</label>
+                  <input type="text" id="floor" name="floor" autocomplete="off" aria-describedby="floor-error" placeholder="Opcional">
+                  <p class="field__error" id="floor-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="apartment">Departamento</label>
+                  <input type="text" id="apartment" name="apartment" autocomplete="off" aria-describedby="apartment-error" placeholder="Opcional">
+                  <p class="field__error" id="apartment-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="provinceCode">Provincia</label>
+                  <select id="provinceCode" name="provinceCode" aria-describedby="provinceCode-error" required>
+                    <option value="">Seleccionar provincia</option>
+                    <option value="1">Buenos Aires</option>
+                    <option value="3">Catamarca</option>
+                    <option value="4">Cordoba</option>
+                    <option value="5">Corrientes</option>
+                    <option value="6">Entre Rios</option>
+                    <option value="7">Jujuy</option>
+                    <option value="8">La Rioja</option>
+                    <option value="9">Mendoza</option>
+                    <option value="10">Salta</option>
+                    <option value="11">San Juan</option>
+                    <option value="12">San Luis</option>
+                    <option value="13">Santa Fe</option>
+                    <option value="14">Santiago del Estero</option>
+                    <option value="15">Tucuman</option>
+                    <option value="16">Chaco</option>
+                    <option value="17">Chubut</option>
+                    <option value="18">Formosa</option>
+                    <option value="19">La Pampa</option>
+                    <option value="20">Ciudad Autonoma de Buenos Aires</option>
+                    <option value="21">Misiones</option>
+                    <option value="22">Neuquen</option>
+                    <option value="23">Rio Negro</option>
+                    <option value="24">Santa Cruz</option>
+                    <option value="25">Tierra del Fuego</option>
+                  </select>
+                  <p class="field__error" id="provinceCode-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="locality">Localidad</label>
+                  <input type="text" id="locality" name="locality" autocomplete="address-level2" aria-describedby="locality-error" placeholder="Ingresa tu localidad" required>
+                  <p class="field__error" id="locality-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="postalCode">Codigo postal</label>
+                  <input type="text" id="postalCode" name="postalCode" autocomplete="postal-code" aria-describedby="postalCode-error" placeholder="Ingresa tu codigo postal" required>
+                  <p class="field__error" id="postalCode-error" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="phone">Telefono / Celular</label>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phone-error" placeholder="Ingresa tu telefono" required>
+                  <p class="field__error" id="phone-error" hidden></p>
+                </div>
+
+                <div class="field field--full">
+                  <label for="email">Email de contacto</label>
+                  <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-error" placeholder="Ingresa tu email" required>
+                  <p class="field__error" id="email-error" hidden></p>
+                </div>
+
+                <div class="field field--full">
+                  <label for="occupationCode">Actividad / ocupacion</label>
+                  <select id="occupationCode" name="occupationCode" aria-describedby="occupationCode-error" required>
+                    <option value="">Seleccionar ocupacion</option>
+                    <option value="2">Comerciante</option>
+                    <option value="7">Administrativo</option>
+                    <option value="836">Cadete (no en moto)</option>
+                    <option value="890">Mensajero en moto</option>
+                    <option value="911">Repartidor (con o sin vehiculo)</option>
+                    <option value="946">Desempleado</option>
+                    <option value="985">Personal administrativo</option>
+                  </select>
+                  <p class="field__error" id="occupationCode-error" hidden></p>
+                </div>
               </div>
 
               <div class="form-feedback" role="status" aria-live="polite" aria-atomic="true">

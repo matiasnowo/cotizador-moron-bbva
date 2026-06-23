@@ -307,21 +307,52 @@ EOF
 
 send_bolso() {
   local nombre dni fecha_nacimiento email_addr telefono
-  local raw_nombre apellido nombres dni_digits id_venta fecha_alta fecha_nacimiento_yyyymmdd
-  local phone_interface email_interface txt_row csv_row txt_content csv_content txt_base64 csv_base64
+  local raw_nombre first_name last_name full_name cuil_digits dni_digits sex_code sex_label civil_status_code civil_status_label
+  local id_venta fecha_alta fecha_nacimiento_yyyymmdd birth_place street street_number floor apartment province_code province_name locality postal_code
+  local occupation_code occupation_name phone_interface email_interface txt_row csv_row txt_content csv_content txt_base64 csv_base64
   local soap_create res_create item_id change_key soap_attach res_attach new_change_key soap_send res_send
   local -a txt_fields csv_fields csv_headers
 
-  raw_nombre="$(json_get '.nombre // .fullName')"
-  IFS=$'\t' read -r apellido nombres <<< "$(split_full_name "$raw_nombre")"
+  first_name="$(sanitize_interface_value "$(json_get '.firstName')" 40)"
+  last_name="$(sanitize_interface_value "$(json_get '.lastName')" 40)"
+  raw_nombre="$(json_get '.fullName // .nombre')"
 
+  if [ -z "$first_name" ] && [ -z "$last_name" ]; then
+    IFS=$'\t' read -r last_name first_name <<< "$(split_full_name "$raw_nombre")"
+  fi
+
+  full_name="$(sanitize_interface_value "${first_name} ${last_name}" 80)"
+  if [ -z "$full_name" ]; then
+    full_name="$(sanitize_interface_value "$raw_nombre" 80)"
+  fi
+
+  cuil_digits="$(digits_only "$(json_get '.cuil // .dni')")"
   dni_digits="$(digits_only "$(json_get '.dni')")"
+  sex_code="$(sanitize_interface_value "$(json_get '.sexCode // .sex')" 1)"
+  sex_label="$(sanitize_interface_value "$(json_get '.sexLabel')" 20)"
+  civil_status_code="$(sanitize_interface_value "$(json_get '.civilStatusCode // .civilStatus')" 1)"
+  civil_status_label="$(sanitize_interface_value "$(json_get '.civilStatusLabel')" 30)"
   fecha_alta="$(TZ="$TZ_BSAS" date '+%Y%m%d')"
-  fecha_nacimiento_yyyymmdd="$(date_to_yyyymmdd "$(json_get '.fechaNacimiento')")"
+  fecha_nacimiento_yyyymmdd="$(date_to_yyyymmdd "$(json_get '.birthDate // .fechaNacimiento')")"
+  birth_place="$(sanitize_interface_value "$(json_get '.birthPlace // .countryLabel')" 20)"
+  street="$(sanitize_interface_value "$(json_get '.street // .addressStreet // .address')" 40)"
+  street_number="$(sanitize_interface_value "$(json_get '.streetNumber // .addressNumber')" 6)"
+  floor="$(sanitize_interface_value "$(json_get '.floor // .addressFloor')" 3)"
+  apartment="$(sanitize_interface_value "$(json_get '.apartment // .addressApartment')" 4)"
+  province_code="$(digits_only "$(json_get '.provinceCode // .province')")"
+  province_name="$(sanitize_interface_value "$(json_get '.provinceName // .province')" 40)"
+  locality="$(sanitize_interface_value "$(json_get '.locality')" 30)"
+  postal_code="$(sanitize_interface_value "$(json_get '.postalCode')" 8)"
+  occupation_code="$(digits_only "$(json_get '.occupationCode')")"
+  occupation_name="$(sanitize_interface_value "$(json_get '.occupationLabel')" 40)"
   id_venta="$(TZ="$TZ_BSAS" date '+%y%m%d%H%M%S')${dni_digits: -4}"
   id_venta="$(sanitize_interface_value "$id_venta" 16)"
   phone_interface="$(sanitize_interface_value "$(json_get '.telefono // .phone')" 20)"
   email_interface="$(sanitize_interface_value "$(json_get '.email')" 40)"
+
+  if [ -z "$birth_place" ]; then
+    birth_place="ARGENTINA"
+  fi
 
   for ((i = 0; i < 72; i++)); do
     txt_fields[$i]=""
@@ -334,20 +365,27 @@ send_bolso() {
   txt_fields[3]="$id_venta"
   txt_fields[4]="$fecha_alta"
   txt_fields[5]="CUIL"
-  txt_fields[6]="$(sanitize_interface_value "$dni_digits" 11)"
-  txt_fields[7]="$apellido"
-  txt_fields[8]="$nombres"
+  txt_fields[6]="$(sanitize_interface_value "$cuil_digits" 11)"
+  txt_fields[7]="$last_name"
+  txt_fields[8]="$first_name"
   txt_fields[9]="1"
   txt_fields[10]="$(sanitize_interface_value "$dni_digits" 8)"
-  txt_fields[11]=""
+  txt_fields[11]="$sex_code"
   txt_fields[12]="$fecha_nacimiento_yyyymmdd"
-  txt_fields[13]="1"
-  txt_fields[14]="ARGENTINA"
+  txt_fields[13]="$civil_status_code"
+  txt_fields[14]="$birth_place"
   txt_fields[16]="0001"
+  txt_fields[17]="$street"
+  txt_fields[18]="$street_number"
+  txt_fields[19]="$floor"
+  txt_fields[20]="$apartment"
+  txt_fields[21]="$(printf '%04d' "${province_code:-0}" | sed 's/^0000$//')"
+  txt_fields[23]="$locality"
+  txt_fields[25]="$postal_code"
   txt_fields[28]="$phone_interface"
   txt_fields[30]="$email_interface"
   txt_fields[31]="S"
-  txt_fields[32]="000090"
+  txt_fields[32]="$(printf '%06d' "${occupation_code:-0}" | sed 's/^000000$//')"
   txt_fields[33]="154"
   txt_fields[35]="50000000"
   txt_fields[36]="01"
@@ -360,7 +398,8 @@ send_bolso() {
   csv_fields[1]="5"
   csv_fields[2]="13"
   csv_fields[16]="1"
-  csv_fields[32]="90"
+  csv_fields[21]="$province_code"
+  csv_fields[32]="$occupation_code"
   csv_fields[36]="1"
   csv_fields[37]="1"
   csv_fields[38]="3"
@@ -388,9 +427,10 @@ send_bolso() {
   txt_base64=$(printf '%s' "$txt_content" | base64 | tr -d '\n')
   csv_base64=$(printf '%s' "$csv_content" | base64 | tr -d '\n')
 
-  nombre="$(escaped_or_no_info "$raw_nombre")"
-  dni="$(escaped_or_no_info "$(json_get '.dni')")"
-  fecha_nacimiento="$(escaped_or_no_info "$(json_get '.fechaNacimiento')")"
+  nombre="$(escaped_or_no_info "$full_name")"
+  dni="$(escaped_or_no_info "$dni_digits")"
+  cuil="$(escaped_or_no_info "$cuil_digits")"
+  fecha_nacimiento="$(escaped_or_no_info "$(json_get '.birthDate // .fechaNacimiento')")"
   email_addr="$(escaped_or_no_info "$(json_get '.email')")"
   telefono="$(escaped_or_no_info "$(json_get '.telefono // .phone')")"
 
@@ -414,10 +454,22 @@ send_bolso() {
               <h2>Nueva Emision de Cobertura</h2>
               <ul>
                 <li><strong>Nombre:</strong> ${nombre}</li>
+                <li><strong>CUIL:</strong> ${cuil}</li>
                 <li><strong>DNI:</strong> ${dni}</li>
+                <li><strong>Sexo:</strong> $(escaped_or_no_info "$sex_label")</li>
+                <li><strong>Estado civil:</strong> $(escaped_or_no_info "$civil_status_label")</li>
                 <li><strong>Fecha de nacimiento:</strong> ${fecha_nacimiento}</li>
+                <li><strong>Lugar de nacimiento:</strong> $(escaped_or_no_info "$birth_place")</li>
+                <li><strong>Calle:</strong> $(escaped_or_no_info "$street")</li>
+                <li><strong>Numero:</strong> $(escaped_or_no_info "$street_number")</li>
+                <li><strong>Piso:</strong> $(escaped_or_no_info "$floor")</li>
+                <li><strong>Departamento:</strong> $(escaped_or_no_info "$apartment")</li>
+                <li><strong>Provincia:</strong> $(escaped_or_no_info "$province_name")</li>
+                <li><strong>Localidad:</strong> $(escaped_or_no_info "$locality")</li>
+                <li><strong>Codigo postal:</strong> $(escaped_or_no_info "$postal_code")</li>
                 <li><strong>Email:</strong> ${email_addr}</li>
                 <li><strong>Telefono:</strong> ${telefono}</li>
+                <li><strong>Ocupacion:</strong> $(escaped_or_no_info "$occupation_name")</li>
               </ul>
             </div>
           ]]></t:Body>

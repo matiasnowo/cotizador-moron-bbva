@@ -3,7 +3,74 @@ const API_URL = "https://proxy-github-moron.camconvenio.workers.dev";
 const WORKER_PAYLOAD_PREFIX = "MORON_PAYLOAD_V1:";
 
 const VIEW_IDS = ["home", "bici", "bolso", "baja"];
-const FIELD_ORDER = ["fullName", "dni", "birthDate", "email", "phone"];
+const FIELD_ORDER = [
+  "firstName",
+  "lastName",
+  "cuil",
+  "dni",
+  "sex",
+  "civilStatus",
+  "birthDate",
+  "birthPlace",
+  "street",
+  "streetNumber",
+  "floor",
+  "apartment",
+  "provinceCode",
+  "locality",
+  "postalCode",
+  "email",
+  "phone",
+  "occupationCode",
+];
+const BOLSO_SEX_OPTIONS = {
+  "1": "Masculino",
+  "2": "Femenino",
+};
+const BOLSO_CIVIL_STATUS_OPTIONS = {
+  "1": "Soltero",
+  "2": "Casado",
+  "3": "Divorciado",
+  "4": "Conviviente",
+  "5": "Separado de hecho",
+  "6": "Viudo",
+  "7": "Separado",
+};
+const BOLSO_PROVINCE_OPTIONS = {
+  "1": "Buenos Aires",
+  "3": "Catamarca",
+  "4": "Cordoba",
+  "5": "Corrientes",
+  "6": "Entre Rios",
+  "7": "Jujuy",
+  "8": "La Rioja",
+  "9": "Mendoza",
+  "10": "Salta",
+  "11": "San Juan",
+  "12": "San Luis",
+  "13": "Santa Fe",
+  "14": "Santiago del Estero",
+  "15": "Tucuman",
+  "16": "Chaco",
+  "17": "Chubut",
+  "18": "Formosa",
+  "19": "La Pampa",
+  "20": "Ciudad Autonoma de Buenos Aires",
+  "21": "Misiones",
+  "22": "Neuquen",
+  "23": "Rio Negro",
+  "24": "Santa Cruz",
+  "25": "Tierra del Fuego",
+};
+const BOLSO_OCCUPATION_OPTIONS = {
+  "2": "Comerciante",
+  "7": "Administrativo",
+  "836": "Cadete (no en moto)",
+  "890": "Mensajero en moto",
+  "911": "Repartidor (con o sin vehiculo)",
+  "946": "Desempleado",
+  "985": "Personal administrativo",
+};
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\+?\d+$/;
 const CURRENT_YEAR = new Date().getFullYear();
@@ -105,16 +172,31 @@ const BICI_PREVIEW_LABELS = {
 };
 
 const ERROR_MESSAGES = {
-  fullName: "Ingresa nombre y apellido.",
+  firstName: "Ingresa el nombre.",
+  lastName: "Ingresa el apellido.",
+  cuilRequired: "Ingresa el CUIL.",
+  cuilInvalid: "El CUIL debe contener solo numeros.",
+  cuilLength: "El CUIL debe tener 11 digitos.",
   dniRequired: "Ingresa el DNI.",
   dniInvalid: "El DNI debe contener solo numeros.",
+  dniLength: "El DNI debe tener 7 u 8 digitos.",
+  sex: "Selecciona el sexo.",
+  civilStatus: "Selecciona el estado civil.",
   birthDateRequired: "Ingresa la fecha de nacimiento.",
   birthDateFuture: "La fecha de nacimiento no puede ser futura.",
+  birthPlace: "Ingresa el lugar de nacimiento.",
+  street: "Ingresa la calle.",
+  streetNumber: "Ingresa el numero de la calle.",
+  provinceCode: "Selecciona la provincia.",
+  locality: "Ingresa la localidad.",
+  postalCode: "Ingresa el codigo postal.",
+  postalCodeLength: "El codigo postal no puede superar 8 caracteres.",
   emailRequired: "Ingresa un email de contacto.",
   emailInvalid: "Ingresa un email valido.",
   phoneRequired: "Ingresa un telefono o celular.",
   phoneInvalid: "El telefono solo puede incluir numeros y un prefijo +.",
   phoneLength: "El telefono debe tener al menos 8 digitos.",
+  occupationCode: "Selecciona la ocupacion.",
 };
 
 const BAJA_ERROR_MESSAGES = {
@@ -235,18 +317,44 @@ document.addEventListener("DOMContentLoaded", () => {
     error: document.getElementById("feedback-error"),
   };
   const fieldNodes = {
-    fullName: document.getElementById("fullName"),
+    firstName: document.getElementById("firstName"),
+    lastName: document.getElementById("lastName"),
+    cuil: document.getElementById("cuil"),
     dni: document.getElementById("dni"),
+    sex: document.getElementById("sex"),
+    civilStatus: document.getElementById("civilStatus"),
     birthDate: document.getElementById("birthDate"),
+    birthPlace: document.getElementById("birthPlace"),
+    street: document.getElementById("street"),
+    streetNumber: document.getElementById("streetNumber"),
+    floor: document.getElementById("floor"),
+    apartment: document.getElementById("apartment"),
+    provinceCode: document.getElementById("provinceCode"),
+    locality: document.getElementById("locality"),
+    postalCode: document.getElementById("postalCode"),
     email: document.getElementById("email"),
     phone: document.getElementById("phone"),
+    occupationCode: document.getElementById("occupationCode"),
   };
   const errorNodes = {
-    fullName: document.getElementById("fullName-error"),
+    firstName: document.getElementById("firstName-error"),
+    lastName: document.getElementById("lastName-error"),
+    cuil: document.getElementById("cuil-error"),
     dni: document.getElementById("dni-error"),
+    sex: document.getElementById("sex-error"),
+    civilStatus: document.getElementById("civilStatus-error"),
     birthDate: document.getElementById("birthDate-error"),
+    birthPlace: document.getElementById("birthPlace-error"),
+    street: document.getElementById("street-error"),
+    streetNumber: document.getElementById("streetNumber-error"),
+    floor: document.getElementById("floor-error"),
+    apartment: document.getElementById("apartment-error"),
+    provinceCode: document.getElementById("provinceCode-error"),
+    locality: document.getElementById("locality-error"),
+    postalCode: document.getElementById("postalCode-error"),
     email: document.getElementById("email-error"),
     phone: document.getElementById("phone-error"),
+    occupationCode: document.getElementById("occupationCode-error"),
   };
   const biciForm = document.getElementById("bici-form");
   const biciSubmitButton = document.getElementById("bici-submit-button");
@@ -499,9 +607,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const requestId = generateBolsoRequestId();
+    const requestedAt = formatBuenosAiresDateTime(new Date());
+    const payload = buildBolsoPayload(normalizedValues, { requestId, requestedAt });
+
     setUiState("submitting");
 
-    enviarSolicitud(normalizedValues)
+    enviarSolicitud(payload)
       .then(() => {
         form.reset();
         clearFormValidation(fieldNodes, errorNodes);
@@ -1135,6 +1247,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return normalized || "No informado";
   }
 
+  function getOptionLabel(options, value) {
+    const key = String(value ?? "").trim();
+    return options[key] || "";
+  }
+
   function formatBuenosAiresDateTime(date) {
     const formatter = new Intl.DateTimeFormat("es-AR", {
       timeZone: "America/Argentina/Buenos_Aires",
@@ -1156,6 +1273,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return `BICI-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+  }
+
+  function buildBolsoPayload(values, meta = {}) {
+    const requestId = String(meta.requestId ?? "").trim();
+    const requestedAt = String(meta.requestedAt ?? "").trim();
+    const fullName = collapseWhitespace(`${values.firstName} ${values.lastName}`);
+    const metadata = {
+      timezone: "America/Argentina/Buenos_Aires",
+      previewOnly: !requestId,
+    };
+
+    if (requestId) {
+      metadata.requestId = requestId;
+    }
+
+    if (requestedAt) {
+      metadata.requestedAt = requestedAt;
+    }
+
+    const payload = {
+      producto: "bolso",
+      product: "bolso",
+      timezone: "America/Argentina/Buenos_Aires",
+      firstName: values.firstName,
+      lastName: values.lastName,
+      fullName,
+      nombre: fullName,
+      cuil: values.cuil,
+      dni: values.dni,
+      sexCode: values.sex,
+      sexLabel: getOptionLabel(BOLSO_SEX_OPTIONS, values.sex),
+      civilStatusCode: values.civilStatus,
+      civilStatusLabel: getOptionLabel(BOLSO_CIVIL_STATUS_OPTIONS, values.civilStatus),
+      birthDate: values.birthDate,
+      fechaNacimiento: values.birthDate,
+      birthPlace: values.birthPlace,
+      countryCode: "0001",
+      countryLabel: "ARGENTINA",
+      street: values.street,
+      streetNumber: values.streetNumber,
+      floor: values.floor,
+      apartment: values.apartment,
+      provinceCode: values.provinceCode,
+      provinceName: getOptionLabel(BOLSO_PROVINCE_OPTIONS, values.provinceCode),
+      locality: values.locality,
+      postalCode: values.postalCode,
+      email: values.email,
+      phone: values.phone,
+      telefono: values.phone,
+      occupationCode: values.occupationCode,
+      occupationLabel: getOptionLabel(BOLSO_OCCUPATION_OPTIONS, values.occupationCode),
+      metadata,
+    };
+
+    if (requestId) {
+      payload.requestId = requestId;
+    }
+
+    if (requestedAt) {
+      payload.requestedAt = requestedAt;
+    }
+
+    return payload;
+  }
+
+  function generateBolsoRequestId() {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return `BOLSO-${crypto.randomUUID()}`;
+    }
+
+    return `BOLSO-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
   }
 
   function readBajaFormValues(formElement) {
@@ -1365,13 +1553,12 @@ async function enviarSolicitud(datos) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
+    body: JSON.stringify(buildWorkerCompatiblePayload(datos, {
       nombre: datos.fullName,
       dni: datos.dni,
-      fechaNacimiento: datos.birthDate,
       email: datos.email,
       telefono: datos.phone,
-    }),
+    })),
   });
 
   if (!response.ok) {
@@ -1456,21 +1643,47 @@ function readFormValues(form) {
   const formData = new FormData(form);
 
   return {
-    fullName: String(formData.get("fullName") ?? ""),
+    firstName: String(formData.get("firstName") ?? ""),
+    lastName: String(formData.get("lastName") ?? ""),
+    cuil: String(formData.get("cuil") ?? ""),
     dni: String(formData.get("dni") ?? ""),
+    sex: String(formData.get("sex") ?? ""),
+    civilStatus: String(formData.get("civilStatus") ?? ""),
     birthDate: String(formData.get("birthDate") ?? ""),
+    birthPlace: String(formData.get("birthPlace") ?? ""),
+    street: String(formData.get("street") ?? ""),
+    streetNumber: String(formData.get("streetNumber") ?? ""),
+    floor: String(formData.get("floor") ?? ""),
+    apartment: String(formData.get("apartment") ?? ""),
+    provinceCode: String(formData.get("provinceCode") ?? ""),
+    locality: String(formData.get("locality") ?? ""),
+    postalCode: String(formData.get("postalCode") ?? ""),
     email: String(formData.get("email") ?? ""),
     phone: String(formData.get("phone") ?? ""),
+    occupationCode: String(formData.get("occupationCode") ?? ""),
   };
 }
 
 function normalizeFormValues(values) {
   return {
-    fullName: collapseWhitespace(values.fullName),
+    firstName: collapseWhitespace(values.firstName),
+    lastName: collapseWhitespace(values.lastName),
+    cuil: stripCommonSeparators(values.cuil),
     dni: stripCommonSeparators(values.dni),
+    sex: String(values.sex ?? "").trim(),
+    civilStatus: String(values.civilStatus ?? "").trim(),
     birthDate: String(values.birthDate ?? "").trim(),
+    birthPlace: collapseWhitespace(values.birthPlace),
+    street: collapseWhitespace(values.street),
+    streetNumber: collapseWhitespace(values.streetNumber),
+    floor: collapseWhitespace(values.floor),
+    apartment: collapseWhitespace(values.apartment),
+    provinceCode: String(values.provinceCode ?? "").trim(),
+    locality: collapseWhitespace(values.locality),
+    postalCode: collapseWhitespace(values.postalCode),
     email: String(values.email ?? "").trim().toLowerCase(),
     phone: stripPhoneSeparators(values.phone),
+    occupationCode: String(values.occupationCode ?? "").trim(),
   };
 }
 
@@ -1478,8 +1691,20 @@ function validateFormValues(values) {
   const errors = {};
   const todayIso = getLocalIsoDate(new Date());
 
-  if (!values.fullName) {
-    errors.fullName = ERROR_MESSAGES.fullName;
+  if (!values.firstName) {
+    errors.firstName = ERROR_MESSAGES.firstName;
+  }
+
+  if (!values.lastName) {
+    errors.lastName = ERROR_MESSAGES.lastName;
+  }
+
+  if (!values.cuil) {
+    errors.cuil = ERROR_MESSAGES.cuilRequired;
+  } else if (!/^\d+$/.test(values.cuil)) {
+    errors.cuil = ERROR_MESSAGES.cuilInvalid;
+  } else if (values.cuil.length !== 11) {
+    errors.cuil = ERROR_MESSAGES.cuilLength;
   }
 
   if (!values.dni) {
@@ -1487,13 +1712,47 @@ function validateFormValues(values) {
   } else if (!/^\d+$/.test(values.dni)) {
     errors.dni = ERROR_MESSAGES.dniInvalid;
   } else if (values.dni.length < 7 || values.dni.length > 8) {
-    errors.dni = "El DNI debe tener 7 u 8 digitos.";
+    errors.dni = ERROR_MESSAGES.dniLength;
+  }
+
+  if (!values.sex) {
+    errors.sex = ERROR_MESSAGES.sex;
+  }
+
+  if (!values.civilStatus) {
+    errors.civilStatus = ERROR_MESSAGES.civilStatus;
   }
 
   if (!values.birthDate) {
     errors.birthDate = ERROR_MESSAGES.birthDateRequired;
   } else if (values.birthDate > todayIso) {
     errors.birthDate = ERROR_MESSAGES.birthDateFuture;
+  }
+
+  if (!values.birthPlace) {
+    errors.birthPlace = ERROR_MESSAGES.birthPlace;
+  }
+
+  if (!values.street) {
+    errors.street = ERROR_MESSAGES.street;
+  }
+
+  if (!values.streetNumber) {
+    errors.streetNumber = ERROR_MESSAGES.streetNumber;
+  }
+
+  if (!values.provinceCode) {
+    errors.provinceCode = ERROR_MESSAGES.provinceCode;
+  }
+
+  if (!values.locality) {
+    errors.locality = ERROR_MESSAGES.locality;
+  }
+
+  if (!values.postalCode) {
+    errors.postalCode = ERROR_MESSAGES.postalCode;
+  } else if (values.postalCode.length > 8) {
+    errors.postalCode = ERROR_MESSAGES.postalCodeLength;
   }
 
   if (!values.email) {
@@ -1508,6 +1767,10 @@ function validateFormValues(values) {
     errors.phone = ERROR_MESSAGES.phoneInvalid;
   } else if (values.phone.replace(/^\+/, "").length < 8) {
     errors.phone = ERROR_MESSAGES.phoneLength;
+  }
+
+  if (!values.occupationCode) {
+    errors.occupationCode = ERROR_MESSAGES.occupationCode;
   }
 
   return errors;
