@@ -1232,6 +1232,10 @@ form {
   grid-column: 1 / -1;
 }
 
+.form-grid--bolso .primary-action {
+  margin-top: var(--space-2);
+}
+
 .field--full {
   grid-column: 1 / -1;
 }
