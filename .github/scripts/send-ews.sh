@@ -379,43 +379,28 @@ send_bolso() {
     capital_amount="50000000"
   fi
 
-  if [ -z "$payment_method_code" ]; then
-    payment_method_code="01"
-  fi
-
   if [ -z "$installment_count" ]; then
-    installment_count="01"
+    installment_count=""
   fi
 
   if [ -z "$card_type_code" ]; then
-    card_type_code="0003"
-  fi
-
-  if [ "$payment_method_code" = "01" ]; then
-    if [ -z "$card_number" ]; then
-      echo "Faltan datos obligatorios para generar el archivo de bolso: se informa medio de pago con tarjeta pero no se recibio el numero de tarjeta (W99_NTAR / campo 39)."
-      echo "No se enviara un adjunto invalido. Este dato no deberia capturarse en el frontend publico actual."
-      exit 1
-    fi
-  fi
-
-  if [ "$payment_method_code" != "01" ]; then
     card_type_code=""
-    card_number=""
   fi
 
-  if [ "$payment_method_code" = "02" ] || [ "$payment_method_code" = "03" ]; then
-    if [ -z "$bank_debit_code" ] && [ -z "$bank_tc_code" ] && [ -z "$bank_account_number" ] && [ -z "$bank_cbu" ]; then
-      echo "Faltan datos bancarios obligatorios para el medio de pago informado en bolso."
-      echo "No se enviara un adjunto invalido."
-      exit 1
-    fi
-  else
-    bank_tc_code=""
-    bank_debit_code=""
-    bank_branch_code=""
-    bank_account_number=""
-    bank_cbu=""
+  if [ -z "$payment_method_code" ]; then
+    payment_method_code=""
+  fi
+
+  if [ -z "$item_data_1" ]; then
+    item_data_1="BOLSO PROTEGIDO / CELULAR / AP"
+  fi
+
+  if [ -z "$item_data_2" ]; then
+    item_data_2=""
+  fi
+
+  if [ -z "$item_data_3" ]; then
+    item_data_3=""
   fi
 
   for ((i = 0; i < 72; i++)); do
@@ -511,7 +496,7 @@ send_bolso() {
   email_addr="$(escaped_or_no_info "$(json_get '.email')")"
   telefono="$(escaped_or_no_info "$(json_get '.telefono // .phone')")"
 
-  echo "Generando adjuntos de produccion para bolso..."
+  echo "Generando solicitud interna para bolso..."
 
   echo "========================================="
   echo "PASO A: Creando borrador (CreateItem)..."
@@ -529,6 +514,7 @@ send_bolso() {
           <t:Body BodyType=\"HTML\"><![CDATA[
             <div style=\"font-family: Arial, sans-serif;\">
               <h2>Nueva Emision de Cobertura</h2>
+              <p><strong>Estado:</strong> Solicitud interna pendiente de completar pago en backoffice.</p>
               <ul>
                 <li><strong>Nombre:</strong> ${nombre}</li>
                 <li><strong>CUIL:</strong> ${cuil}</li>
