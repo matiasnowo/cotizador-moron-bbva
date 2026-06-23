@@ -899,7 +899,7 @@ form {
 }
 
 .panel--form form {
-  grid-template-columns: 1fr;
+  display: block;
 }
 
 .field {
