@@ -899,7 +899,8 @@ form {
 }
 
 .panel--form form {
-  display: block;
+  display: grid;
+  gap: var(--space-3);
 }
 
 .field {
@@ -1226,6 +1227,11 @@ form {
   gap: var(--space-3);
 }
 
+.form-grid--bolso .form-feedback,
+.form-grid--bolso .primary-action {
+  grid-column: 1 / -1;
+}
+
 .field--full {
   grid-column: 1 / -1;
 }
@@ -1370,6 +1376,12 @@ form {
 
   .contact-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid--bolso .form-feedback,
+  .form-grid--bolso .primary-action,
+  .form-grid--bolso .field--full {
+    grid-column: 1 / -1;
   }
 }
 
