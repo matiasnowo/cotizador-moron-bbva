@@ -1037,7 +1037,7 @@ form {
 }
 
 .ssn-footer__label {
-  font-size: 0.76rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -1161,7 +1161,7 @@ form {
   }
 
   .bici-layout {
-    grid-template-columns: minmax(0, 1.06fr) minmax(340px, 0.94fr);
+    grid-template-columns: minmax(0, 1.06fr) minmax(340px, 0.74fr);
     align-items: start;
   }
 
